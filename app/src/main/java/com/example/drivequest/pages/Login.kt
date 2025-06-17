@@ -132,7 +132,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                            fontSize = 10.sp,
                            modifier = Modifier
                                .align(Alignment.TopStart)
-                               .offset(y = (-15).dp) // ← テキストフィールドより少し上に配置
+                               .offset(y = (-16).dp) // ← テキストフィールドより少し上に配置
                        )
                    }
                    // TextButton：右上に配置し、y軸で少し浮かせる
