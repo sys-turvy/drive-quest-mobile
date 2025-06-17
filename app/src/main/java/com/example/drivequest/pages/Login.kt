@@ -1,4 +1,5 @@
 package com.example.drivequest.pages
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -21,9 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.drivequest.ui.theme.FontGray
@@ -35,6 +38,8 @@ import com.example.drivequest.ui.theme.RegistrationLayout
 fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisrationClick:() -> Unit){
     val email = remember{ mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    val showEmailError = remember { mutableStateOf(false) }
+    val showPasswordError = remember { mutableStateOf(false) }
     RegistrationLayout ( modifier = modifier) {
         Text(
             text = "ドライブクエスト",
@@ -51,8 +56,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                 .width(320.dp)
                 .height(550.dp)
                 .padding(top = 70.dp)
-                .fillMaxSize()
-            ,
+                .fillMaxSize(),
         ){
            Column (
                horizontalAlignment = Alignment.CenterHorizontally,
@@ -65,36 +69,72 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                    fontSize = 24.sp,
                    fontWeight = FontWeight.Bold,
                    modifier = Modifier.padding(top = 70.dp),
-                   style = TextStyle(
-                       textDecoration = TextDecoration.combine(
-                           listOf(
-                               TextDecoration.Underline,
-
-                           ),
-                       )
-                   ),
+               )
+               // 下線を自作
+               Box(
+                   modifier = Modifier
+                       .width(120.dp)           // ← Textの幅に合わせる
+                       .height(2.dp)           // ← 下線の太さ
+                       .background(FontGray)   // ← 下線の色
                )
                //メールアドレス
-               OutlinedTextField(
-                   value = email.value,
-                   onValueChange = {email.value=it},
-                   label = {
-                       Text(
-                           text="メールアドレス",
-                           fontSize = 16.sp
-                       )
-                   },
-                   singleLine = true,
-                    modifier = Modifier
-                        .padding(top = 30.dp)
-                        .width(250.dp)
-
-               )
                Box(
                    modifier = Modifier
                        .width(250.dp)
                        .padding(top = 30.dp)
                ) {
+                   // エラーメッセージ(メールアドレス)
+                   if (showEmailError.value) {
+                       Text(
+                           text = "メールアドレスを入力してください",
+                           color = Color.Red,
+                           fontSize = 10.sp,
+                           modifier = Modifier
+                               .align(Alignment.TopStart)
+                               .offset(y = (-8).dp) // ← テキストフィールドより少し上に配置
+                       )
+                   }
+                   // メールアドレス入力欄
+                   OutlinedTextField(
+                       value = email.value,
+                       // エラーメッセージの初期化
+                       onValueChange = {
+                           email.value = it
+                           showEmailError.value = false
+                       },
+                       label = {
+                           Text(
+                               text = "メールアドレス",
+                               fontSize = 16.sp
+                           )
+                       },
+                       keyboardOptions = KeyboardOptions(
+                           keyboardType = KeyboardType.Email,
+                           imeAction = ImeAction.Next
+                       ),
+                       singleLine = true,
+                       modifier = Modifier
+                           .width(250.dp)
+                           .padding(top = 8.dp) // エラーメッセージとの間隔
+                   )
+               }
+
+               Box(
+                   modifier = Modifier
+                       .width(250.dp)
+                       .padding(top = 30.dp)
+               ) {
+                   // エラーメッセージ(パスワード)
+                   if (showPasswordError.value) {
+                       Text(
+                           text = "パスワードを入力してください",
+                           color = Color.Red,
+                           fontSize = 10.sp,
+                           modifier = Modifier
+                               .align(Alignment.TopStart)
+                               .offset(y = (-15).dp) // ← テキストフィールドより少し上に配置
+                       )
+                   }
                    // TextButton：右上に配置し、y軸で少し浮かせる
                    TextButton(
                        onClick = onForgotClick,
@@ -113,13 +153,21 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                    // パスワード入力欄
                    OutlinedTextField(
                        value = password.value,
-                       onValueChange = { password.value = it },
+                       onValueChange = {
+                           password.value = it
+                           showPasswordError.value = false
+                       },
                        label = {
                            Text(
                                text = "パスワード",
                                fontSize = 16.sp
                            )
                        },
+                       visualTransformation = PasswordVisualTransformation(), // ← ●●●● 表示
+                       keyboardOptions = KeyboardOptions(
+                           keyboardType = KeyboardType.Password,
+                           imeAction = ImeAction.Next
+                       ),
                        singleLine = true,
                        modifier = Modifier
                            .fillMaxWidth()
@@ -129,6 +177,13 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                //ログインボタン
                Button(
                    onClick = {
+                    if(email.value.isBlank()){
+                        showEmailError.value = true
+
+                    }
+                   if(password.value.isBlank()){
+                       showPasswordError.value = true
+                   }
 
                    },
                    modifier = Modifier
