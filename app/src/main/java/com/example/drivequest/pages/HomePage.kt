@@ -1,33 +1,38 @@
 package com.example.drivequest.pages
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )),
-        horizontalAlignment = Alignment.CenterHorizontally
+    // 1. 表示したい場所の座標を定義 (元のコードにあった大阪の座標)
+    val osakaStation = LatLng(34.702485, 135.495951)
+
+    // 2. 地図のカメラ位置を記憶・管理するためのStateを作成
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(osakaStation, 15f) // 初期位置とズームレベルを設定
+    }
+
+    // 3. GoogleMap Composableを配置
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState
     ) {
-        Text(
-            text = "ホーム",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
+        // 4. 地図上にマーカーを配置
+        Marker(
+            state = MarkerState(position = osakaStation),
+            title = "大阪駅",
+            snippet = "ここが中心です"
         )
     }
 }
+
