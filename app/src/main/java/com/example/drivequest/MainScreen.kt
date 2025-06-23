@@ -45,7 +45,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
     )
 
     var selectedIndex by remember {
-        mutableIntStateOf(0)
+        mutableIntStateOf(1)
     }
 
     Scaffold(
