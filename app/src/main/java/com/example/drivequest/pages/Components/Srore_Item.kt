@@ -1,7 +1,7 @@
 package com.example.drivequest.pages.Components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -15,80 +15,70 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage // 画像読み込み用のライブラリ（Coil）をインポート
+import coil.compose.AsyncImage
 
-/**
- * フレームカードを表示するComposable関数。
- *
- * @param imageUrl 画像URL。空文字の場合はダミーのボックスが表示される
- * @param frameName カードに表示するフレーム名
- * @param price 表示価格
- * @param modifier 外部から適用できるModifier
- */
 @Composable
 fun FrameCard(
     imageUrl: String = "",
     frameName: String = "??フレーム",
-    price: Int = 0,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    price: Int = 200,
+    purchase: Int = 0,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {} // 追加
 ) {
-    // カード全体のボックス
+    val corner = 16.dp
+    val defaultImageUrl = "https://play-lh.googleusercontent.com/2HAZLGMx7WmmnCT5b7CAKazuEhHtTfnnCPDrAI9FY3gYsGXfvpxby0j0qj3PSixc4w"
+    val cardBgColor = if (purchase == 1) Color(0xFF616161) else Color.White
+
     Box(
         modifier = modifier
-            .shadow(8.dp, RoundedCornerShape(16.dp)) // 影をつける
-            .clip(RoundedCornerShape(16.dp))         // 角を丸く切り抜く
-            .background(Color.White)                 // 背景色（白）
-            .padding(8.dp)                          // 内側の余白
-            .width(120.dp),                          // カードの幅
-        contentAlignment = Alignment.Center          // 子要素を中央揃え
+            .shadow(8.dp, RoundedCornerShape(corner))
+            .clip(RoundedCornerShape(corner))
+            .background(cardBgColor)
+            .padding(16.dp)
+            .clickable(enabled = purchase == 0) { onClick() }, // 購入済みはタップ無効
+        contentAlignment = Alignment.Center
     ) {
-        // カード内のレイアウト（縦方向）
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally, // 横方向は中央揃え
-            verticalArrangement = Arrangement.Center,           // 縦も中央
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // 画像URLが空でない場合は画像を表示
-            if (imageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = imageUrl, // Coilで画像をロード
-                    contentDescription = frameName,
-                    modifier = Modifier
-                        .size(80.dp)               // 画像サイズ
-                        .clip(RoundedCornerShape(8.dp)), // 角丸
-                    // contentScale = ContentScale.Crop // 必要なら出す（切り抜きモード）
-                )
-            } else {
-                // 画像URLが空の場合、グレー色のダミーボックスを表示
-                Box(
-                    modifier = Modifier
-                        .size(80.dp) // サイズ
-                        .background(Color(0xFFB0BEC5), RoundedCornerShape(8.dp)) // グレー+角丸
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp)) // 画像とタイトルの間隔
-
-            // フレーム名を表示
+            AsyncImage(
+                model = if (imageUrl.isNotBlank()) imageUrl else defaultImageUrl,
+                contentDescription = frameName,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = frameName,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color.Black,
+                color = if (purchase == 1) Color.White else Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(8.dp)) // タイトルと値段の間隔
-
-            // 価格を表示（太字・少し大きな文字）
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "${price}円",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF000000),
+                color = if (purchase == 1) Color.White else Color(0xFF000000),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+        if (purchase == 1) {
+            Text(
+                text = "購入済み",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .background(Color(0x99000000), shape = RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
     }

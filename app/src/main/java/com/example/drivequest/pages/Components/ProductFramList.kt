@@ -1,5 +1,3 @@
-// com/example/drivequest/pages/Components/ProductFrameGrid.kt
-
 package com.example.drivequest.pages.Components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,10 +15,11 @@ import com.example.drivequest.data.Product
 @Composable
 fun ProductFrameGrid(
     products: List<Product>,
+    onProductClick: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),             // 4列
+        columns = GridCells.Fixed(3),             // 3列
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),   // 行間余白
         horizontalArrangement = Arrangement.spacedBy(16.dp), // 列間余白
@@ -31,7 +30,9 @@ fun ProductFrameGrid(
                 imageUrl = product.imageUrl,
                 frameName = product.name,
                 price = product.price,
-                modifier = Modifier // ※width指定は不要
+                purchase = product.purchase,   // ← カンマを忘れずに
+                modifier = Modifier, // ※width指定は不要
+                onClick = { onProductClick(product) }  // ← = を一つだけ、カンマもOK！
             )
         }
     }
