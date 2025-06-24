@@ -58,6 +58,7 @@ fun RankingPage(modifier: Modifier = Modifier) {
         Text(
             text = "ランキング",
             fontSize = 24.sp,
+            modifier = Modifier.padding(16.dp),
             fontWeight = FontWeight.SemiBold,
             color = Color.White
         )
@@ -68,8 +69,8 @@ fun RankingPage(modifier: Modifier = Modifier) {
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(550.dp)
-                .padding(20.dp)
+                .height(525.dp)
+                .padding(start = 20.dp, end = 20.dp,bottom = 10.dp)
         ) {
             Column(
                 modifier = modifier.fillMaxSize(),
