@@ -25,14 +25,60 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable("login") {
                         LoginPage(
-                            onForgotClick = {},
+                            onForgotClick = {
+                                navController.navigate("forgetpassword")
+                            },
                             onRegisrationClick = {
                                 navController.navigate("registration")
                             }
                         )
                     }
                     composable("registration") {
-                        Registration(navController = navController)
+                        Registration(
+                            navController = navController,
+                            onProfileSetupClick = { email, password ->
+                                val encodedEmail = Uri.encode(email)
+                                val encodedPassword = Uri.encode(password)
+                                navController.navigate("ProfileSetupPage/$encodedEmail/$encodedPassword")
+                            }
+                        )
+
+                    }
+                    composable(
+                        "profileSetupPage/{email}/{password}",
+                        arguments = listOf(
+                            navArgument("email") { type = NavType.StringType },
+                            navArgument("password") { type = NavType.StringType }
+                        )
+                    ) {
+                        backStackEntry ->
+                        val email = backStackEntry.arguments?.getString("email") ?: ""
+                        val password = backStackEntry.arguments?.getString("password") ?: ""
+                        ProfileSetupPage(
+                            email = email, password = password,
+                            navController = navController,
+                            onCompleteClick = {navController.navigate("registrationcomplete")}
+                        )
+                    }
+                    composable("registrationcomplete")
+                    {
+                        RegistrationCompletePage(
+                            navController = navController,
+                            onLoginClick = {navController.navigate("login")}
+                        )
+                    }
+                    composable("forgetpassword")
+                    {
+                        ForgetPasswordPage(
+                            modifier = Modifier,
+                            navController = navController,
+                        )
+                    }
+                    composable("authenticationcode") {
+                        AutthenticationCodePage(
+                            modifier = Modifier,
+                            navController = navController
+                        )
                     }
                 }
             }
