@@ -40,6 +40,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
     val password = remember { mutableStateOf("") }
     val showEmailError = remember { mutableStateOf(false) }
     val showPasswordError = remember { mutableStateOf(false) }
+    val emailErrorMessage = remember { mutableStateOf("") }
     RegistrationLayout ( modifier = modifier) {
         Text(
             text = "ドライブクエスト",
@@ -86,7 +87,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                    // エラーメッセージ(メールアドレス)
                    if (showEmailError.value) {
                        Text(
-                           text = "メールアドレスを入力してください",
+                           text = emailErrorMessage.value,
                            color = Color.Red,
                            fontSize = 10.sp,
                            modifier = Modifier
@@ -166,7 +167,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                        visualTransformation = PasswordVisualTransformation(), // ← ●●●● 表示
                        keyboardOptions = KeyboardOptions(
                            keyboardType = KeyboardType.Password,
-                           imeAction = ImeAction.Next
+                           imeAction =  ImeAction.Done,
                        ),
                        singleLine = true,
                        modifier = Modifier
@@ -177,14 +178,23 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                //ログインボタン
                Button(
                    onClick = {
-                    if(email.value.isBlank()){
-                        showEmailError.value = true
-
-                    }
-                   if(password.value.isBlank()){
-                       showPasswordError.value = true
-                   }
-
+                       when {
+                           email.value.isBlank() -> {
+                               emailErrorMessage.value = "メールアドレスを入力してください"
+                               showEmailError.value = true
+                           }
+                           !isValidEmail(email.value) -> {
+                               emailErrorMessage.value = "有効なメールアドレスを入力してください"
+                               showEmailError.value = true
+                           }
+                           else -> {
+                               showEmailError.value = false
+                               // 送信処理
+                           }
+                       }
+                       if(password.value.isBlank()){
+                           showPasswordError.value = true
+                       }
                    },
                    modifier = Modifier
                        .padding(top = 40.dp)
