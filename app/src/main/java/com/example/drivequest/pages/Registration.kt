@@ -34,7 +34,7 @@ import com.example.drivequest.ui.theme.MainOrange
 import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
-fun Registration(modifier: Modifier = Modifier, navController: NavController){
+fun Registration(modifier: Modifier = Modifier, navController: NavController,onProfileSetupClick: (email: String, password: String) -> Unit){
     val email = remember{ mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmpassword = remember { mutableStateOf("") }
@@ -194,10 +194,12 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController){
                                 fontSize = 16.sp
                             )
                         },
-                        visualTransformation = PasswordVisualTransformation(), // ← ●●●● 表示
+                        // ← ●●●● 表示
+                        visualTransformation = PasswordVisualTransformation(),
+                        //キーボードタイプ
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Next
+                            imeAction =  ImeAction.Done,
                         ),
                         singleLine = true,
                         modifier = Modifier
@@ -231,14 +233,14 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController){
                         if (!hasError) {
                             // すべて入力され、かつパスワードも一致 → 次の処理へ
                             println("次の画面へ進みます")
-                            // navController.navigate("NextScreen") など
+                            onProfileSetupClick(email.value, password.value)
                         }
                     },
                     modifier = Modifier
                         .padding(top = 30.dp)
                         .width(200.dp)
                         .height(45.dp),
-                    shape = RoundedCornerShape(24.dp), // 丸みを強調
+                    shape = RoundedCornerShape(24.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MainBlue)
                 ) {
                     Text(
@@ -248,7 +250,7 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController){
                         color = Color.White
                     )
                 }
-                //新規登録はこちら
+                //アカウントお持ちの方はこちら
                 TextButton(
                     onClick = {navController.popBackStack()},
                     modifier = Modifier
