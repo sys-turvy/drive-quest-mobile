@@ -13,6 +13,8 @@ import androidx.navigation.navArgument
 import com.example.drivequest.pages.AutthenticationCodePage
 import com.example.drivequest.pages.ForgetPasswordPage
 import com.example.drivequest.pages.LoginPage
+import com.example.drivequest.pages.NewPasswordPage
+import com.example.drivequest.pages.PasswordChangeCompletePage
 import com.example.drivequest.pages.ProfileSetupPage
 import com.example.drivequest.pages.Registration
 import com.example.drivequest.pages.RegistrationCompletePage
@@ -78,12 +80,27 @@ class MainActivity : ComponentActivity() {
                         ForgetPasswordPage(
                             modifier = Modifier,
                             navController = navController,
+                            onAuthenticationCodeClick = {navController.navigate("authenticationcode")}
                         )
                     }
                     composable("authenticationcode") {
                         AutthenticationCodePage(
                             modifier = Modifier,
-                            navController = navController
+                            navController = navController,
+                            onNewPasswordClick = {navController.navigate("newpassword")}
+                        )
+                    }
+                    composable("newpassword") {
+                        NewPasswordPage(
+                            modifier = Modifier,
+                            navController = navController,
+                            onChangeCompleteClick = {navController.navigate("passwordchengecomplete")}
+                        )
+                    }
+                    composable("passwordchengecomplete") {
+                        PasswordChangeCompletePage(
+                            modifier = Modifier,
+                            onLoginPageClick = {navController.navigate("login")}
                         )
                     }
                 }
