@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -168,12 +169,12 @@ fun ProfileSetupPage ( modifier: Modifier = Modifier,email: String,password:Stri
                 //ニックネーム
                 OutlinedTextField(
                     value = nickname.value,
-                    onValueChange = {nickname.value},
+                    onValueChange = {nickname.value =it},
                     modifier = Modifier
                         .padding(bottom = 25.dp),
                     label = {
                         Text(
-                            "ニックネーム:",
+                            "ニックネーム",
                             fontSize = 16.sp,
                         )
                     },
@@ -188,11 +189,27 @@ fun ProfileSetupPage ( modifier: Modifier = Modifier,email: String,password:Stri
                     mileage = mileage.value,
                     onMileageSelected = {mileage.value = it}
                 )
-                //登録ボタン
-                Button(
+                //スキップボタン
+                TextButton(
                     onClick = onCompleteClick,
                     modifier = Modifier
-                        .padding(top = 40.dp)
+                        .padding(top=10.dp)
+                ) {
+                    Text(
+                        "登録せずスキップする",
+                        style = TextStyle(
+                            color = MainBlue,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                    )
+                }
+                //登録ボタン
+                Button(
+                    //ここにプロフィールの登録処理を書く
+                    onClick = onCompleteClick,
+                    modifier = Modifier
                         .width(200.dp)
                         .height(45.dp)
                     ,
