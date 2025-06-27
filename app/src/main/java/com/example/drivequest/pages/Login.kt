@@ -55,7 +55,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
             tonalElevation = 20.dp ,
             modifier = Modifier
                 .width(320.dp)
-                .height(550.dp)
+                .height(600.dp)
                 .padding(top = 70.dp)
                 .fillMaxSize(),
         ){
@@ -133,21 +133,7 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                            fontSize = 10.sp,
                            modifier = Modifier
                                .align(Alignment.TopStart)
-                               .offset(y = (-16).dp) // ← テキストフィールドより少し上に配置
-                       )
-                   }
-                   // TextButton：右上に配置し、y軸で少し浮かせる
-                   TextButton(
-                       onClick = onForgotClick,
-                       modifier = Modifier
-                           .align(Alignment.TopEnd)
-                           .offset(y = (-15).dp), // ← 安全に位置を上へずらす
-                       contentPadding = PaddingValues(0.dp)
-                   ) {
-                       Text(
-                           text = "パスワードを忘れた方",
-                           fontSize = 14.sp,
-                           color = MainBlue
+                               .offset(y = (-8).dp) // ← テキストフィールドより少し上に配置
                        )
                    }
 
@@ -225,7 +211,19 @@ fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisr
                         fontWeight = FontWeight.SemiBold,
                     )
                }
+               // TextButton：右上に配置し、y軸で少し浮かせる
+               TextButton(
+                   onClick = onForgotClick,
+                   modifier = Modifier
 
+               ) {
+                   Text(
+                       text = "パスワードを忘れた方",
+                       fontSize = 13.sp,
+                       color = MainBlue,
+                       fontWeight = FontWeight.SemiBold,
+                   )
+               }
            }
         }
     }
