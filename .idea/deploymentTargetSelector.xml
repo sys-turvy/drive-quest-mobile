@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="app">
+      <SelectionState runConfigName="DriveQuest.app">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="FriendListPagePreview">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2025-06-24T01:37:38.088091Z">
           <Target type="DEFAULT_BOOT">
