@@ -27,22 +27,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
-import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
 fun AutthenticationCodePage( modifier:Modifier, navController: NavController,onNewPasswordClick:() -> Unit){
     val codeErrorMessage = remember { mutableStateOf("") }
     val code = remember { mutableStateOf("") }
     val codeError = remember { mutableStateOf(false) }
-    RegistrationLayout(modifier = modifier) {
+    GradientBackground {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -168,4 +172,14 @@ fun AutthenticationCodePage( modifier:Modifier, navController: NavController,onN
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun AutthenticationCodePagePreview() {
+    val context = LocalContext.current
+    val navController = TestNavHostController(context).apply {
+        navigatorProvider.addNavigator(ComposeNavigator())
+    }
+    AutthenticationCodePage(modifier = Modifier, navController = navController, onNewPasswordClick = {})
 }

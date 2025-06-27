@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.drivequest.R
 import coil.compose.AsyncImage
+import com.example.drivequest.pages.Components.GradientBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,23 +118,6 @@ fun FriendListTopAppBar(
         },
         scrollBehavior = scrollBehavior,
     )
-}
-
-@Composable
-fun GradientBackground(
-    content: @Composable () -> Unit
-) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )
-            )
-    ) {
-        content()
-    }
 }
 
 @Composable

@@ -20,7 +20,11 @@ import com.example.drivequest.data.sampleFrames
 import com.example.drivequest.pages.Components.ProductFrameGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
 
 enum class StoreTab { Icon, Frame }
 
@@ -243,4 +247,10 @@ fun ProductDetailDialog(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun StorePagePreview() {
+    StorePage(modifier = Modifier)
 }

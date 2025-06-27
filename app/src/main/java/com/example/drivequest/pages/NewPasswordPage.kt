@@ -27,16 +27,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
-import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
 fun NewPasswordPage(modifier: Modifier,navController: NavController,onChangeCompleteClick:() ->Unit){
@@ -46,7 +50,7 @@ fun NewPasswordPage(modifier: Modifier,navController: NavController,onChangeComp
     val showConfirmPasswordError = remember { mutableStateOf(false) }
     val confirmPasswordErrorMessage = remember { mutableStateOf("") }
     var hasError = false
-    RegistrationLayout ( modifier = modifier) {
+    GradientBackground {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -228,4 +232,14 @@ fun NewPasswordPage(modifier: Modifier,navController: NavController,onChangeComp
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun NewPasswordPagePreview() {
+    val context = LocalContext.current
+    val navController = TestNavHostController(context).apply {
+        navigatorProvider.addNavigator(ComposeNavigator())
+    }
+    NewPasswordPage(modifier = Modifier, navController = navController, onChangeCompleteClick = {})
 }

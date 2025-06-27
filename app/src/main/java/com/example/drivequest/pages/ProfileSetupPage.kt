@@ -34,22 +34,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.drivequest.pages.Components.DropDownMenu
+import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
-import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
 fun ProfileSetupPage ( modifier: Modifier = Modifier,email: String,password:String,navController: NavController,onCompleteClick:() ->Unit){
-    RegistrationLayout (modifier = modifier){
+    GradientBackground {
         //選択した画像
         val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
         //画像選択の機能に必要な変数
@@ -226,8 +230,15 @@ fun ProfileSetupPage ( modifier: Modifier = Modifier,email: String,password:Stri
                 }
             }
         }
-
-
     }
+}
 
+@Preview
+@Composable
+fun ProfileSetupPagePreview() {
+    val context = LocalContext.current
+    val navController = TestNavHostController(context).apply {
+        navigatorProvider.addNavigator(ComposeNavigator())
+    }
+    ProfileSetupPage(modifier = Modifier, navController = navController, onCompleteClick = {}, email = "123", password = "aa")
 }

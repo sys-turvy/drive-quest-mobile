@@ -21,17 +21,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
-import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
 fun Registration(modifier: Modifier = Modifier, navController: NavController,onProfileSetupClick: (email: String, password: String) -> Unit){
@@ -44,7 +48,7 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController,onP
     val confirmPasswordErrorMessage = remember { mutableStateOf("") }
     var hasError = false
 
-    RegistrationLayout (modifier =modifier){
+    GradientBackground{
         Text(
             text = "ドライブクエスト",
             color = Color.White,
@@ -266,4 +270,17 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController,onP
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun RegistrationPreview() {
+    val context = LocalContext.current
+    val navController = TestNavHostController(context).apply {
+        navigatorProvider.addNavigator(ComposeNavigator())
+    }
+    Registration(modifier = Modifier, navController = navController, onProfileSetupClick = { name, email ->
+        // ダミー処理（プレビュー用）
+        println("Name: $name, Email: $email")
+    })
 }

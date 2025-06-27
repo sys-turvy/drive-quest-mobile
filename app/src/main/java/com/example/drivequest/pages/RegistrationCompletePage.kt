@@ -1,39 +1,36 @@
 package com.example.drivequest.pages
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBackIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
-import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
 fun RegistrationCompletePage(modifier: Modifier = Modifier, navController:NavController,onLoginClick:() -> Unit)
 {
-    RegistrationLayout(modifier = modifier) {
+    GradientBackground {
         Text(
             text = "ドライブクエスト",
             color = Color.White,
@@ -87,4 +84,14 @@ fun RegistrationCompletePage(modifier: Modifier = Modifier, navController:NavCon
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun RegistrationCompletePagePreview() {
+    val context = LocalContext.current
+    val navController = TestNavHostController(context).apply {
+        navigatorProvider.addNavigator(ComposeNavigator())
+    }
+    RegistrationCompletePage(modifier = Modifier, navController = navController, onLoginClick = {})
 }
