@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -189,11 +190,28 @@ fun ProfileSetupPage ( modifier: Modifier = Modifier,email: String,password:Stri
                     mileage = mileage.value,
                     onMileageSelected = {mileage.value = it}
                 )
+                //登録ボタン
+                Button(
+                    onClick = onCompleteClick,
+                    modifier = Modifier
+                        .width(200.dp)
+                        .padding(top = 20.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MainBlue),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Text(
+                        "登録",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = Color.White
+                    )
+                }
                 //スキップボタン
                 TextButton(
                     onClick = onCompleteClick,
                     modifier = Modifier
-                        .padding(top=10.dp)
+
                 ) {
                     Text(
                         "登録せずスキップする",
@@ -202,25 +220,6 @@ fun ProfileSetupPage ( modifier: Modifier = Modifier,email: String,password:Stri
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold
                         )
-
-                    )
-                }
-                //登録ボタン
-                Button(
-                    //ここにプロフィールの登録処理を書く
-                    onClick = onCompleteClick,
-                    modifier = Modifier
-                        .width(200.dp)
-                        .height(45.dp)
-                    ,
-                    shape = RoundedCornerShape(24.dp), // 丸みを強調
-                    colors = ButtonDefaults.buttonColors(containerColor = MainBlue)
-                ) {
-                    Text(
-                        "登録",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color.White
 
                     )
                 }
