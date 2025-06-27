@@ -127,7 +127,7 @@ fun NewPasswordPage(modifier: Modifier,navController: NavController,onChangeComp
                         },
                         label = {
                             Text(
-                                text="パスワード:",
+                                text="パスワード",
                                 fontSize = 16.sp
                             )
                         },
@@ -169,7 +169,7 @@ fun NewPasswordPage(modifier: Modifier,navController: NavController,onChangeComp
                         },
                         label = {
                             Text(
-                                text="パスワード確認:",
+                                text="パスワード確認",
                                 fontSize = 16.sp
                             )
                         },

@@ -148,7 +148,7 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController,onP
                         },
                         label = {
                             Text(
-                                text="パスワード:",
+                                text="パスワード",
                                 fontSize = 16.sp
                             )
                         },
@@ -190,7 +190,7 @@ fun Registration(modifier: Modifier = Modifier, navController: NavController,onP
                         },
                         label = {
                             Text(
-                                text="パスワード確認:",
+                                text="パスワード確認",
                                 fontSize = 16.sp
                             )
                         },
