@@ -38,7 +38,7 @@ import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.RegistrationLayout
 
 @Composable
-fun AutthenticationCodePage( modifier:Modifier, navController: NavController){
+fun AutthenticationCodePage( modifier:Modifier, navController: NavController,onNewPasswordClick:() -> Unit){
     val codeErrorMessage = remember { mutableStateOf("") }
     val code = remember { mutableStateOf("") }
     val codeError = remember { mutableStateOf(false) }
@@ -147,6 +147,7 @@ fun AutthenticationCodePage( modifier:Modifier, navController: NavController){
                         }else{
                             //認証処理
 
+                            onNewPasswordClick()
                         }
                     },
                     modifier = Modifier
@@ -162,7 +163,6 @@ fun AutthenticationCodePage( modifier:Modifier, navController: NavController){
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = Color.White
-
                     )
                 }
             }
