@@ -1,6 +1,5 @@
-package com.example.drivequest.pages.component
+package com.example.drivequest.pages.Components
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox

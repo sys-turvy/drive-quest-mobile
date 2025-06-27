@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.drivequest.pages.component.DropDownMenu
+import com.example.drivequest.pages.Components.DropDownMenu
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.RegistrationLayout
