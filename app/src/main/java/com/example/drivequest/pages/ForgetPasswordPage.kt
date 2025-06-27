@@ -41,7 +41,7 @@ fun isValidEmail(email: String): Boolean {
     return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }
 @Composable
-fun ForgetPasswordPage(modifier: Modifier, navController:NavController){
+fun ForgetPasswordPage(modifier: Modifier, navController:NavController, onAuthenticationCodeClick:() -> Unit ){
     RegistrationLayout(modifier = modifier) {
         val email =remember{ mutableStateOf("") }
         // エラーメッセージの内容
@@ -156,6 +156,9 @@ fun ForgetPasswordPage(modifier: Modifier, navController:NavController){
                             else -> {
                                 showEmailError.value = false
                                 // 送信処理
+
+                                //画面遷移
+                                onAuthenticationCodeClick()
                             }
                         }
                     },
