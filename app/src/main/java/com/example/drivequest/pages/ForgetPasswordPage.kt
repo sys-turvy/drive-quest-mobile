@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 
 fun isValidEmail(email: String): Boolean {
@@ -46,141 +47,139 @@ fun isValidEmail(email: String): Boolean {
 }
 @Composable
 fun ForgetPasswordPage(modifier: Modifier, navController:NavController, onAuthenticationCodeClick:() -> Unit ){
-    GradientBackground {
-        val email =remember{ mutableStateOf("") }
-        // エラーメッセージの内容
-        val emailErrorMessage = remember { mutableStateOf("") }
-        val showEmailError = remember { mutableStateOf(false) }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .padding(start = 31.dp, top = 60.dp)
-        ) {
-            IconButton(
-                onClick = {navController.popBackStack()},
+    val email =remember{ mutableStateOf("") }
+    // エラーメッセージの内容
+    val emailErrorMessage = remember { mutableStateOf("") }
+    val showEmailError = remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .padding(start = 31.dp, top = 60.dp)
+    ) {
+        IconButton(
+            onClick = {navController.popBackStack()},
 
-                ) {
-                Icon(
-                    imageVector = Icons.Outlined.ArrowBackIos ,
-                    contentDescription = "戻る",
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+            ) {
+            Icon(
+                imageVector = Icons.Outlined.ArrowBackIos ,
+                contentDescription = "戻る",
+                tint = Color.White,
+                modifier = Modifier.size(32.dp)
+            )
         }
-        Text(
-            text = "ドライブクエスト",
-            color = Color.White,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 60.dp)
-        )
-        Surface (
-            color = Color.White,
-            shape = RoundedCornerShape(25.dp),
-            tonalElevation = 20.dp ,
-            modifier = Modifier
-                .width(320.dp)
-                .height(400.dp)
-                .padding(top = 70.dp)
-                .fillMaxSize(),
-        ) {
-            Column (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier
-                    .fillMaxSize()
+    }
+    Text(
+        text = "ドライブクエスト",
+        color = Color.White,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(top = 60.dp)
+    )
+    Surface (
+        color = Color.White,
+        shape = RoundedCornerShape(25.dp),
+        tonalElevation = 20.dp ,
+        modifier = Modifier
+            .width(320.dp)
+            .height(400.dp)
+            .padding(top = 70.dp)
+            .fillMaxSize(),
+    ) {
+        Column (
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+                .fillMaxSize()
+        ){
+            Text(
+                "新規パスワード設定",
+                color = FontGray,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 24.sp,
+                modifier = Modifier.padding(top = 50.dp)
+            )
+            //下線
+            Box(
+                modifier = Modifier
+                    .width(240.dp)
+                    .height(2.dp)
+                    .background(FontGray)
+            )
+            //メールアドレス
+            Box(
+                modifier = Modifier
+                    .width(250.dp)
+                    .padding(top = 30.dp)
             ){
-                Text(
-                    "新規パスワード設定",
-                    color = FontGray,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(top = 50.dp)
-                )
-                //下線
-                Box(
-                    modifier = Modifier
-                        .width(240.dp)
-                        .height(2.dp)
-                        .background(FontGray)
-                )
-                //メールアドレス
-                Box(
+                // エラーメッセージ(メールアドレス)
+                if (showEmailError.value) {
+                    Text(
+                        text = emailErrorMessage.value,
+                        color = Color.Red,
+                        fontSize = 10.sp,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .offset(y = (-13).dp)
+                    )
+                }
+                // メールアドレス入力欄
+                OutlinedTextField(
+                    value = email.value,
+                    // エラーメッセージの初期化
+                    onValueChange = {
+                        email.value = it
+                        showEmailError.value = false
+                    },
+                    label = {
+                        Text(
+                            text = "メールアドレス",
+                            fontSize = 16.sp
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    singleLine = true,
                     modifier = Modifier
                         .width(250.dp)
-                        .padding(top = 30.dp)
-                ){
-                    // エラーメッセージ(メールアドレス)
-                    if (showEmailError.value) {
-                        Text(
-                            text = emailErrorMessage.value,
-                            color = Color.Red,
-                            fontSize = 10.sp,
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .offset(y = (-13).dp)
-                        )
-                    }
-                    // メールアドレス入力欄
-                    OutlinedTextField(
-                        value = email.value,
-                        // エラーメッセージの初期化
-                        onValueChange = {
-                            email.value = it
-                            showEmailError.value = false
-                        },
-                        label = {
-                            Text(
-                                text = "メールアドレス",
-                                fontSize = 16.sp
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Done
-                        ),
-                        singleLine = true,
-                        modifier = Modifier
-                            .width(250.dp)
-                            .padding(top = 8.dp) // エラーメッセージとの間隔
-                    )
-                }
-                Button(
-                    onClick = {
-                        when {
-                            email.value.isBlank() -> {
-                                emailErrorMessage.value = "メールアドレスを入力してください"
-                                showEmailError.value = true
-                            }
-                            !isValidEmail(email.value) -> {
-                                emailErrorMessage.value = "有効なメールアドレスを入力してください"
-                                showEmailError.value = true
-                            }
-                            else -> {
-                                showEmailError.value = false
-                                // 送信処理
-
-                                //画面遷移
-                                onAuthenticationCodeClick()
-                            }
+                        .padding(top = 8.dp) // エラーメッセージとの間隔
+                )
+            }
+            Button(
+                onClick = {
+                    when {
+                        email.value.isBlank() -> {
+                            emailErrorMessage.value = "メールアドレスを入力してください"
+                            showEmailError.value = true
                         }
-                    },
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .width(200.dp)
-                        .height(45.dp)
-                    ,
-                    shape = RoundedCornerShape(24.dp), // 丸みを強調
-                    colors = ButtonDefaults.buttonColors(containerColor = MainBlue)
-                ) {
-                    Text(
-                        "送信",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
-                }
+                        !isValidEmail(email.value) -> {
+                            emailErrorMessage.value = "有効なメールアドレスを入力してください"
+                            showEmailError.value = true
+                        }
+                        else -> {
+                            showEmailError.value = false
+                            // 送信処理
+
+                            //画面遷移
+                            onAuthenticationCodeClick()
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .padding(top = 40.dp)
+                    .width(200.dp)
+                    .height(45.dp)
+                ,
+                shape = RoundedCornerShape(24.dp), // 丸みを強調
+                colors = ButtonDefaults.buttonColors(containerColor = MainBlue)
+            ) {
+                Text(
+                    "送信",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
             }
         }
     }
@@ -193,5 +192,12 @@ fun ForgetPasswordPagePreview() {
     val navController = TestNavHostController(context).apply {
         navigatorProvider.addNavigator(ComposeNavigator())
     }
-    ForgetPasswordPage(modifier = Modifier, navController = navController, onAuthenticationCodeClick = {})
+    DriveQuestTheme {
+        GradientBackground {
+            ForgetPasswordPage(
+                modifier = Modifier,
+                navController = navController,
+                onAuthenticationCodeClick = {})
+        }
+    }
 }

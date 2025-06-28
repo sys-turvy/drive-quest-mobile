@@ -23,59 +23,61 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 
 @Composable
 fun PasswordChangeCompletePage(modifier: Modifier,onLoginPageClick:()->Unit){
-    GradientBackground {
+    Text(
+        text = "ドライブクエスト",
+        color = Color.White,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(top = 160.dp)
+    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxSize()
+    ) {
         Text(
-            text = "ドライブクエスト",
+            text = "パスワードの変更\nが完了しました！",
             color = Color.White,
-            fontSize = 28.sp,
+            fontSize = 36.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 160.dp)
+            textAlign = TextAlign.Center,
+            lineHeight = 40.sp,
+            modifier = Modifier
+                .padding(top = 160.dp)
+                .fillMaxWidth()
         )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-                .fillMaxSize()
-        ) {
+        Button(
+            onClick = {
+                onLoginPageClick()
+            },
+            modifier = Modifier
+                .padding(top = 70.dp)
+                .width(240.dp)
+                .height(60.dp),
+            shape = RoundedCornerShape(30.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+        ){
             Text(
-                text = "パスワードの変更\nが完了しました！",
-                color = Color.White,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                lineHeight = 40.sp,
-                modifier = Modifier
-                    .padding(top = 160.dp)
-                    .fillMaxWidth()
+                "ログイン画面に戻る",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = MainBlue
             )
-            Button(
-                onClick = {
-                    onLoginPageClick()
-                },
-                modifier = Modifier
-                    .padding(top = 70.dp)
-                    .width(240.dp)
-                    .height(60.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-            ){
-                Text(
-                    "ログイン画面に戻る",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = MainBlue
-                )
-            }
         }
-
     }
 }
 
 @Preview
 @Composable
 fun PasswordChangeCompletePagePreview() {
-    PasswordChangeCompletePage(modifier = Modifier, onLoginPageClick = {})
+    DriveQuestTheme {
+        GradientBackground {
+            PasswordChangeCompletePage(modifier = Modifier, onLoginPageClick = {})
+        }
+    }
 }

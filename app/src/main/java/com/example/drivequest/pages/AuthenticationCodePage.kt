@@ -1,26 +1,26 @@
 package com.example.drivequest.pages
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIos
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,148 +38,127 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.ui.theme.FontGray
-import com.example.drivequest.ui.theme.MainBlue
+import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.example.drivequest.pages.Components.ActionButton
+import com.example.drivequest.pages.Components.LabeledOutlinedTextFieldWithError
+import com.example.drivequest.pages.Components.UnderlineText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutthenticationCodePage( modifier:Modifier, navController: NavController,onNewPasswordClick:() -> Unit){
-    val codeErrorMessage = remember { mutableStateOf("") }
-    val code = remember { mutableStateOf("") }
-    val codeError = remember { mutableStateOf(false) }
-    GradientBackground {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .padding(start = 31.dp, top = 60.dp)
-        ) {
-            IconButton(
-                onClick = {navController.popBackStack()},
+fun AuthenticationCodePage(navController: NavController){
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                title = {
+                    Text(
+                        text = "ドライブクエスト",
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {navController.popBackStack()},
 
-                ) {
-                Icon(
-                    imageVector = Icons.Outlined.ArrowBackIos ,
-                    contentDescription = "戻る",
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
-        Text(
-            text = "ドライブクエスト",
-            color = Color.White,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 60.dp)
-        )
-        Surface (
-            color = Color.White,
-            shape = RoundedCornerShape(25.dp),
-            tonalElevation = 20.dp ,
-            modifier = Modifier
-                .width(320.dp)
-                .height(400.dp)
-                .padding(top = 40.dp)
-                .padding(bottom = 30.dp)
-                .fillMaxSize(),
-        ) {
-            Column (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier
-                    .fillMaxSize()
-            ) {
-                Text(
-                    "認証コードを入力",
-                    color = FontGray,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 50.dp),
-                )
-                // 下線を自作
-                Box(
-                    modifier = Modifier
-                        .width(220.dp)
-                        .height(2.dp)
-                        .background(FontGray)
-                )
-                Box(
-                    modifier = Modifier
-                        .width(250.dp)
-                        .padding(top = 30.dp)
-                ) {
-                    // エラーメッセージ(認証コード)
-                    if (codeError.value) {
-                        Text(
-                            text = codeErrorMessage.value,
-                            color = Color.Red,
-                            fontSize = 10.sp,
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .offset(y = (-8).dp) // ← テキストフィールドより少し上に配置
+                        ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBackIos ,
+                            contentDescription = "戻る",
+                            tint = Color.White,
+                            modifier = Modifier.size(32.dp)
                         )
                     }
-                    // 認証コード入力欄
-                    OutlinedTextField(
-                        value = code.value,
-                        // エラーメッセージの初期化
-                        onValueChange = {
-                            codeErrorMessage.value = it
-                        },
-                        label = {
-                            Text(
-                                text = "認証コード",
-                                fontSize = 16.sp
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        singleLine = true,
-                        modifier = Modifier
-                            .width(250.dp)
-                            .padding(top = 8.dp) // エラーメッセージとの間隔
-                    )
                 }
+            )
+        },
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 0.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding()),
+            contentAlignment = Alignment.Center
+        ) {
+            AuthenticationForm(navController)
+        }
+    }
+}
 
-
-                Button(
-                    onClick = {
-                        if(codeErrorMessage.value.isBlank()){
-                            codeErrorMessage.value = "認証コードを入力してください"
-                            codeError.value = true
-                        }else{
-                            //認証処理
-
-                            onNewPasswordClick()
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .width(200.dp)
-                        .height(45.dp)
-                    ,
-                    shape = RoundedCornerShape(24.dp), // 丸みを強調
-                    colors = ButtonDefaults.buttonColors(containerColor = MainBlue)
-                ) {
-                    Text(
-                        "認証",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color.White
-                    )
-                }
-            }
+@Composable
+fun AuthenticationForm(navController: NavController) {
+    val code = remember { mutableStateOf("") }
+    val codeError = remember { mutableStateOf(false) }
+    val codeErrorMessage = remember { mutableStateOf("") }
+    Card (
+        modifier = Modifier,
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        )
+    ) {
+        Column (
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(32.dp),
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+        ) {
+            UnderlineText(
+                text = "認証コードを入力",
+                textColor = Color.Gray,
+                underlineColor = Color.Gray
+            )
+            Spacer(modifier = Modifier.size(2.dp))
+            LabeledOutlinedTextFieldWithError(
+                value = code.value,
+                onValueChange = {
+                    code.value = it
+                },
+                labelText = "認証コード",
+                isError = codeError.value,
+                errorMessage = codeErrorMessage.value,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                )
+            )
+            ActionButton(
+                text = "認証",
+                modifier = Modifier,
+                onClick = {
+                    if(codeErrorMessage.value.isBlank()){
+                        codeErrorMessage.value = "認証コードを入力してください"
+                        codeError.value = true
+                    }else{
+                        //認証処理
+                    }
+                },
+                contentPadding = PaddingValues(
+                    horizontal = 56.dp,
+                    vertical = 12.dp
+                )
+            )
         }
     }
 }
 
 @Preview
 @Composable
-fun AutthenticationCodePagePreview() {
+fun AuthenticationCodePagePreview() {
     val context = LocalContext.current
     val navController = TestNavHostController(context).apply {
         navigatorProvider.addNavigator(ComposeNavigator())
     }
-    AutthenticationCodePage(modifier = Modifier, navController = navController, onNewPasswordClick = {})
+    DriveQuestTheme {
+        GradientBackground {
+            AuthenticationCodePage(navController = navController)
+        }
+    }
 }

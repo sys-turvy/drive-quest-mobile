@@ -17,16 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -42,5 +40,9 @@ fun ProfilePage(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun ProfilePagePreview() {
-    ProfilePage(modifier = Modifier)
+    DriveQuestTheme {
+        GradientBackground {
+            ProfilePage(modifier = Modifier)
+        }
+    }
 }

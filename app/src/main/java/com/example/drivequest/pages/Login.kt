@@ -30,22 +30,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.FontGray
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
 
 @Composable
 fun LoginPage(modifier: Modifier = Modifier, onForgotClick: () -> Unit, onRegisrationClick:() -> Unit){
-    GradientBackground {
-        Text(
-            text = "ドライブクエスト",
-            color = Color.White,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 160.dp)
-        )
-        LoginForm(onForgotClick, onRegisrationClick)
-    }
+    Text(
+        text = "ドライブクエスト",
+        color = Color.White,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(top = 160.dp)
+    )
+    LoginForm(onForgotClick, onRegisrationClick)
 }
 
 @Composable
@@ -237,5 +236,9 @@ fun LoginForm(onForgotClick: () -> Unit, onRegisrationClick:() -> Unit) {
 @Preview
 @Composable
 fun LoginPagePreview() {
-    LoginPage(onForgotClick = {}, onRegisrationClick = {})
+    DriveQuestTheme {
+        GradientBackground {
+            LoginPage(onForgotClick = {}, onRegisrationClick = {})
+        }
+    }
 }

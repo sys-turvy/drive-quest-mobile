@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.example.drivequest.R
 import coil.compose.AsyncImage
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,23 +64,21 @@ fun FriendListPage() {
             title = "ブロンズドライバー"
         )
     }
-    GradientBackground {
-        Scaffold(
-            containerColor = Color.Transparent,
-            topBar = {
-                FriendListTopAppBar(
-                    onBackClick = {},
-                    onAddFriendClick = {},
-                    scrollBehavior =scrollBehavior
-                )
-            }
-        ) { paddingValues ->
-            FriendList(
-                friends = friends,
-                onFriendClick = {},
-                modifier = Modifier.padding(paddingValues)
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            FriendListTopAppBar(
+                onBackClick = {},
+                onAddFriendClick = {},
+                scrollBehavior =scrollBehavior
             )
         }
+    ) { paddingValues ->
+        FriendList(
+            friends = friends,
+            onFriendClick = {},
+            modifier = Modifier.padding(paddingValues)
+        )
     }
 }
 
@@ -263,5 +262,9 @@ fun TitleItem(
 @Preview
 @Composable
 fun FriendListPagePreview() {
-    FriendListPage()
+    DriveQuestTheme {
+        GradientBackground {
+            FriendListPage()
+        }
+    }
 }

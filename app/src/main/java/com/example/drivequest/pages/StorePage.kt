@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 
 enum class StoreTab { Icon, Frame }
 
@@ -78,12 +80,7 @@ fun StorePage(modifier: Modifier = Modifier) {
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )
-            ),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -252,5 +249,9 @@ fun ProductDetailDialog(
 @Preview
 @Composable
 fun StorePagePreview() {
-    StorePage(modifier = Modifier)
+    DriveQuestTheme {
+        GradientBackground {
+            StorePage(modifier = Modifier)
+        }
+    }
 }
