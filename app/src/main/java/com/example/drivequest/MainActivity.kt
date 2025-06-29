@@ -17,7 +17,7 @@ import com.example.drivequest.pages.auth.LoginPage
 import com.example.drivequest.pages.NewPasswordPage
 import com.example.drivequest.pages.PasswordChangeCompletePage
 import com.example.drivequest.pages.ProfileSetupPage
-import com.example.drivequest.pages.Registration
+import com.example.drivequest.pages.auth.Registration
 import com.example.drivequest.pages.RegistrationCompletePage
 import com.example.drivequest.ui.theme.DriveQuestTheme
 

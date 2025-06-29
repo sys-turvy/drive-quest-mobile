@@ -39,7 +39,7 @@ fun FormCard(
                 title,
                 modifier = Modifier
                     .padding(
-                        bottom = 48.dp
+                        bottom = 56.dp
                     ),
                 textColor = Color.Gray,
                 underlineColor = Color.Gray
