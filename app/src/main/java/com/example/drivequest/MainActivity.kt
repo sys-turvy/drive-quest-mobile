@@ -37,15 +37,7 @@ class MainActivity : ComponentActivity() {
                             LoginPage(navController)
                         }
                         composable("registration") {
-                            Registration(
-                                navController = navController,
-                                onProfileSetupClick = { email, password ->
-                                    val encodedEmail = Uri.encode(email)
-                                    val encodedPassword = Uri.encode(password)
-                                    navController.navigate("ProfileSetupPage/$encodedEmail/$encodedPassword")
-                                }
-                            )
-
+                            Registration(navController = navController)
                         }
                         composable(
                             "profileSetupPage/{email}/{password}",

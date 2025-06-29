@@ -63,13 +63,13 @@ fun LoginPage(navController: NavController){
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            LoginForm()
+            LoginForm(navController)
         }
     }
 }
 
 @Composable
-fun LoginForm() {
+fun LoginForm(navController: NavController) {
     val email = remember{ mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val showEmailError = remember { mutableStateOf(false) }
@@ -126,7 +126,9 @@ fun LoginForm() {
                 Text(
                     text = "新規登録はこちら",
                     modifier = Modifier
-                        .clickable{},
+                        .clickable{
+                            navController.navigate("registration")
+                        },
                     color = MainOrange,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,

@@ -63,13 +63,13 @@ fun Registration(navController: NavController){
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            RegistrationForm()
+            RegistrationForm(navController)
         }
     }
 }
 
 @Composable
-fun RegistrationForm() {
+fun RegistrationForm(navController: NavController) {
     val email = remember{ mutableStateOf("") }
     val showEmailError = remember { mutableStateOf(false) }
     val emailErrorMessage = remember { mutableStateOf("") }
@@ -139,7 +139,9 @@ fun RegistrationForm() {
             Text(
                 text = "アカウントお持ちの方はこちら",
                 modifier = Modifier
-                    .clickable{},
+                    .clickable{
+                        navController.navigate("login")
+                    },
                 color = MainOrange,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
