@@ -13,7 +13,7 @@ import androidx.navigation.navArgument
 import com.example.drivequest.pages.AuthenticationCodePage
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.pages.ForgetPasswordPage
-import com.example.drivequest.pages.LoginPage
+import com.example.drivequest.pages.auth.LoginPage
 import com.example.drivequest.pages.NewPasswordPage
 import com.example.drivequest.pages.PasswordChangeCompletePage
 import com.example.drivequest.pages.ProfileSetupPage
@@ -34,14 +34,7 @@ class MainActivity : ComponentActivity() {
                         startDestination ="login"
                     ) {
                         composable("login") {
-                            LoginPage(
-                                onForgotClick = {
-                                    navController.navigate("forgetpassword")
-                                },
-                                onRegisrationClick = {
-                                    navController.navigate("registration")
-                                }
-                            )
+                            LoginPage(navController)
                         }
                         composable("registration") {
                             Registration(

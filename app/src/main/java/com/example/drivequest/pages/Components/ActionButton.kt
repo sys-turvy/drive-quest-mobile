@@ -23,7 +23,7 @@ fun ActionButton(
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MainBlue),
         contentPadding = contentPadding
     ) {
