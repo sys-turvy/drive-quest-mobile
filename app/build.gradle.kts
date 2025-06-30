@@ -42,6 +42,7 @@ android {
 dependencies {
     implementation("androidx.compose.foundation:foundation:1.8.3")
     implementation("io.coil-kt:coil-compose:2.7.0")
+    debugImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

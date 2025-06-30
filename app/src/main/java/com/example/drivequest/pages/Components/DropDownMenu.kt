@@ -1,9 +1,11 @@
 package com.example.drivequest.pages.Components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,34 +18,38 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDownMenu(
-    mileage: Int,
-    onMileageSelected: (Int) -> Unit,
-    options: List<Int> = listOf(10, 20, 30, 40, 50, 60, 70,80,90,100,110,120,130,140,150,160,170,180,190,200,250,300,350)
+    labelText: String,
+    value: Int,
+    showValue: String = "",
+    onValueChange: (Int) -> Unit,
+    singleLine: Boolean = true,
+    options: List<Int>,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedText = if (mileage == 0) "" else "$mileage km"
+    val showText = if (showValue.isNotEmpty()) showValue else "$value"
+    val selectedText = if (value == 0) "" else showText
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
         OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true),
             value = selectedText,
             onValueChange = {}, // 入力禁止（ドロップダウン専用）
             readOnly = true,
+            singleLine = singleLine,
             label = {
                 Text(
-                    text = "目標走行距離:",
+                    text = labelText,
                     fontSize = 16.sp
                 )
             },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded)
             },
-            modifier = Modifier
-                .menuAnchor()
-                 // レイアウトに応じて調整
         )
-
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -52,7 +58,7 @@ fun DropDownMenu(
                 DropdownMenuItem(
                     text = { Text("$option km") },
                     onClick = {
-                        onMileageSelected(option)
+                        onValueChange(option)
                         expanded = false
                     }
                 )

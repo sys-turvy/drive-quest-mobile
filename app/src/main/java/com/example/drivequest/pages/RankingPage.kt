@@ -16,10 +16,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.testing.TestNavHostController
+import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @Composable
 fun RankingPage(modifier: Modifier = Modifier) {
@@ -47,12 +53,7 @@ fun RankingPage(modifier: Modifier = Modifier) {
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )
-            ),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -259,5 +260,15 @@ fun RankingScreen(
 
         val rankingItems = if (selectedTabIndex == 0) monthlyRanking else weeklyRanking
         Ranking(rankingItems = rankingItems)
+    }
+}
+
+@Preview
+@Composable
+fun RankingPagePreview() {
+    DriveQuestTheme {
+        GradientBackground {
+            RankingPage(modifier = Modifier)
+        }
     }
 }

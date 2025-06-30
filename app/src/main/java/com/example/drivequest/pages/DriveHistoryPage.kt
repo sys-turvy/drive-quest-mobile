@@ -21,8 +21,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @Composable
 fun DriveHistoryPage(modifier: Modifier = Modifier) {
@@ -32,12 +35,7 @@ fun DriveHistoryPage(modifier: Modifier = Modifier) {
     )
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )
-            ),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -112,8 +110,6 @@ fun DriveLogItem(log: DriveLog) {
     }
 }
 
-
-
 data class DriveLog(
     val date: String,
     val startTime: String,
@@ -121,3 +117,13 @@ data class DriveLog(
     val durationTime: Int,
     val distance: Double
 )
+
+@Preview
+@Composable
+fun DriveHistoryPagePreview() {
+    DriveQuestTheme {
+        GradientBackground {
+            DriveHistoryPage()
+        }
+    }
+}
