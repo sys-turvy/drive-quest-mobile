@@ -1,5 +1,4 @@
 package com.example.drivequest
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +15,7 @@ import com.example.drivequest.pages.ForgetPasswordPage
 import com.example.drivequest.pages.auth.LoginPage
 import com.example.drivequest.pages.NewPasswordPage
 import com.example.drivequest.pages.PasswordChangeCompletePage
-import com.example.drivequest.pages.ProfileSetupPage
+import com.example.drivequest.pages.auth.ProfileSetupPage
 import com.example.drivequest.pages.auth.Registration
 import com.example.drivequest.pages.RegistrationCompletePage
 import com.example.drivequest.ui.theme.DriveQuestTheme
@@ -45,14 +44,13 @@ class MainActivity : ComponentActivity() {
                                 navArgument("email") { type = NavType.StringType },
                                 navArgument("password") { type = NavType.StringType }
                             )
-                        ) {
-                                backStackEntry ->
+                        ) { backStackEntry ->
                             val email = backStackEntry.arguments?.getString("email") ?: ""
                             val password = backStackEntry.arguments?.getString("password") ?: ""
                             ProfileSetupPage(
-                                email = email, password = password,
                                 navController = navController,
-                                onCompleteClick = {navController.navigate("registrationcomplete")}
+                                email = email,
+                                password = password,
                             )
                         }
                         composable("registrationcomplete")
