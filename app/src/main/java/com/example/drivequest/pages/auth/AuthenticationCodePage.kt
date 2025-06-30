@@ -1,4 +1,4 @@
-package com.example.drivequest.pages
+package com.example.drivequest.pages.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

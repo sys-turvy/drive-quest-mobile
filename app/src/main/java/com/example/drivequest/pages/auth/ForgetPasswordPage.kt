@@ -1,5 +1,6 @@
-package com.example.drivequest.pages
+package com.example.drivequest.pages.auth
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +44,7 @@ import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 
 fun isValidEmail(email: String): Boolean {
-    return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    return Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }
 @Composable
 fun ForgetPasswordPage(modifier: Modifier, navController:NavController, onAuthenticationCodeClick:() -> Unit ){

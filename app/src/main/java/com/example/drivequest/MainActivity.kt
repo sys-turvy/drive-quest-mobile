@@ -9,12 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.drivequest.pages.AuthenticationCodePage
+import com.example.drivequest.pages.auth.AuthenticationCodePage
 import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.pages.ForgetPasswordPage
+import com.example.drivequest.pages.auth.ForgetPasswordPage
 import com.example.drivequest.pages.auth.LoginPage
-import com.example.drivequest.pages.NewPasswordPage
-import com.example.drivequest.pages.PasswordChangeCompletePage
+import com.example.drivequest.pages.auth.NewPasswordPage
+import com.example.drivequest.pages.auth.PasswordChangeCompletePage
 import com.example.drivequest.pages.auth.ProfileSetupPage
 import com.example.drivequest.pages.auth.Registration
 import com.example.drivequest.pages.auth.RegistrationCompletePage
