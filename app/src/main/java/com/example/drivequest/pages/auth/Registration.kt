@@ -1,8 +1,6 @@
 package com.example.drivequest.pages.auth
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,9 +29,9 @@ import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.ActionButton
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.pages.Components.LabeledOutlinedTextFieldWithError
+import com.example.drivequest.pages.Components.UnderlineText
 import com.example.drivequest.pages.auth.components.FormCard
 import com.example.drivequest.ui.theme.DriveQuestTheme
-import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +58,8 @@ fun Registration(navController: NavController){
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(top = 0.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center
         ) {
             RegistrationForm(navController)
@@ -83,7 +82,17 @@ fun RegistrationForm(navController: NavController) {
     val confirmationPasswordErrorMessage = remember { mutableStateOf("") }
 
     FormCard(
-        "新規登録",
+        top = {
+            UnderlineText(
+                "新規登録",
+                modifier = Modifier
+                    .padding(
+                        bottom = 32.dp
+                    ),
+                textColor = Color.Gray,
+                underlineColor = Color.Gray
+            )
+        },
         inputs = {
             LabeledOutlinedTextFieldWithError(
                 value = email.value,

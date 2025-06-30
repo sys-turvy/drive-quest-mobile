@@ -32,6 +32,7 @@ import com.example.drivequest.pages.Components.ActionButton
 import com.example.drivequest.pages.auth.components.FormCard
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.pages.Components.LabeledOutlinedTextFieldWithError
+import com.example.drivequest.pages.Components.UnderlineText
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
@@ -60,7 +61,8 @@ fun LoginPage(navController: NavController){
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(top = 0.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center
         ) {
             LoginForm(navController)
@@ -78,7 +80,17 @@ fun LoginForm(navController: NavController) {
     val passwordErrorMessage = remember { mutableStateOf("") }
 
     FormCard(
-        "ログイン",
+        top = {
+            UnderlineText(
+                "ログイン",
+                modifier = Modifier
+                    .padding(
+                        bottom = 32.dp
+                    ),
+                textColor = Color.Gray,
+                underlineColor = Color.Gray
+            )
+        },
         inputs = {
             LabeledOutlinedTextFieldWithError(
                 value = email.value,

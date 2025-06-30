@@ -17,7 +17,7 @@ import com.example.drivequest.pages.NewPasswordPage
 import com.example.drivequest.pages.PasswordChangeCompletePage
 import com.example.drivequest.pages.auth.ProfileSetupPage
 import com.example.drivequest.pages.auth.Registration
-import com.example.drivequest.pages.RegistrationCompletePage
+import com.example.drivequest.pages.auth.RegistrationCompletePage
 import com.example.drivequest.ui.theme.DriveQuestTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,7 +57,6 @@ class MainActivity : ComponentActivity() {
                         {
                             RegistrationCompletePage(
                                 navController = navController,
-                                onLoginClick = {navController.navigate("login")}
                             )
                         }
                         composable("forgetpassword")

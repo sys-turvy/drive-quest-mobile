@@ -15,7 +15,7 @@ import com.example.drivequest.pages.Components.UnderlineText
 
 @Composable
 fun FormCard(
-    title: String,
+    top: @Composable () -> Unit,
     inputs: @Composable () -> Unit,
     button: @Composable () -> Unit,
     footerContent: @Composable () -> Unit = {}
@@ -35,15 +35,14 @@ fun FormCard(
                 .padding(vertical = 24.dp, horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            UnderlineText(
-                title,
+            Box(
                 modifier = Modifier
                     .padding(
-                        bottom = 56.dp
-                    ),
-                textColor = Color.Gray,
-                underlineColor = Color.Gray
-            )
+                        bottom = 24.dp
+                    )
+            ) {
+                top()
+            }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

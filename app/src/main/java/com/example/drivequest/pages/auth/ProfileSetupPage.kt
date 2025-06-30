@@ -36,6 +36,7 @@ import com.example.drivequest.pages.Components.DropDownMenuWithError
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.pages.Components.LabeledOutlinedTextFieldWithError
 import com.example.drivequest.pages.Components.ProfileImageSelector
+import com.example.drivequest.pages.Components.UnderlineText
 import com.example.drivequest.pages.auth.components.FormCard
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
@@ -64,7 +65,8 @@ fun ProfileSetupPage (navController: NavController, email: String, password:Stri
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(top = 0.dp)
+                .padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center
         ) {
             ProfileSetupForm(navController)
@@ -83,7 +85,17 @@ fun ProfileSetupForm(navController: NavController) {
     val nickname = remember { mutableStateOf("") }
     val mileage = remember { mutableIntStateOf(0) }
     FormCard(
-        "プロフィール設定",
+        top = {
+            UnderlineText(
+                "プロフィール設定",
+                modifier = Modifier
+                    .padding(
+                        bottom = 32.dp
+                    ),
+                textColor = Color.Gray,
+                underlineColor = Color.Gray
+            )
+        },
         inputs = {
             ProfileImageSelector(
                 imageUri = selectedImageUri.value,
