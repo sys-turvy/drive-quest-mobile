@@ -33,6 +33,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,13 +66,15 @@ fun FriendListPage() {
             title = "ブロンズドライバー"
         )
     }
+    //ダイアログ表示用の状態
+    var showDialog by remember { mutableStateOf(false) }
     GradientBackground {
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
                 FriendListTopAppBar(
                     onBackClick = {},
-                    onAddFriendClick = {},
+                    onAddFriendClick = {showDialog = true},
                     scrollBehavior =scrollBehavior
                 )
             }
@@ -77,6 +83,15 @@ fun FriendListPage() {
                 friends = friends,
                 onFriendClick = {},
                 modifier = Modifier.padding(paddingValues)
+            )
+        }
+        //ダイアログ表示
+        if(showDialog){
+            FriendAdditionDialog(
+                UserId = "123456",
+                onDismiss = {
+                    showDialog =false
+                }
             )
         }
     }
