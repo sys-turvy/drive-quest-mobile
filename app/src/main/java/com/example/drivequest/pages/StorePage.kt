@@ -94,7 +94,6 @@ fun StorePage(modifier: Modifier = Modifier) {
                     colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
                 )
             )
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // ★右上にボタン設置
         Button(
