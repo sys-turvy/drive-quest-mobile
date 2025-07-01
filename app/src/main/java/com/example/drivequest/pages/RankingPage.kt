@@ -26,6 +26,9 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.DriveQuestTheme
+import androidx.compose.material.icons.filled.Share
+import android.content.Intent
+
 
 @Composable
 fun RankingPage(modifier: Modifier = Modifier) {
@@ -98,6 +101,7 @@ fun MyRank(myRank: Int, myName: String, myScore: Int) {
         2 -> Color(0xFFA77C3F)
         else -> Color(0xFFE9E9E9)
     }
+    val context = LocalContext.current
 
     Card(
         colors = CardDefaults.cardColors(
@@ -112,13 +116,53 @@ fun MyRank(myRank: Int, myName: String, myScore: Int) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = "My ランク",
-                modifier = Modifier.padding(16.dp),
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "My ランク",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .weight(1f),
+                    textAlign = TextAlign.Center
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable {
+                            // 共有処理
+                            val shareText = "私は現在、${myRank}位で、${myScore}km走行しました！" +
+                                    "ドライブクエストで一緒に競い合おう！"
+                            val intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                                type = "text/plain"
+                            }
+                            val chooser = Intent.createChooser(intent, "共有")
+                            context.startActivity(chooser)
+                        }
+                ) {
+                    Text(
+                        text = "共有",
+                        color = Color(0xFF4A90E2),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "共有",
+                        tint = Color(0xFF4A90E2),
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(start = 4.dp)
+                    )
+                }
+            }
 
             Surface(
                 modifier = Modifier
@@ -163,6 +207,9 @@ fun MyRank(myRank: Int, myName: String, myScore: Int) {
         }
     }
 }
+
+
+
 
 @Composable
 fun Ranking(rankingItems: List<Triple<String, ImageVector, Int>>) {
