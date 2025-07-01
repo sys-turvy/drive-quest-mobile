@@ -245,7 +245,7 @@ fun ProductDetailDialog(
                     if (product.purchase == 1) {
                         Text(
                             "購入済み",
-                            //color = Color(0xFF4A4A4A), // グレー地なら濃いグレー文字もおすすめ
+                            color = Color(0xFF4A4A4A), // グレー地なら濃いグレー文字もおすすめ
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
