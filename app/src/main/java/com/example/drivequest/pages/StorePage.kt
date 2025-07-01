@@ -20,6 +20,7 @@ import com.example.drivequest.data.sampleFrames
 import com.example.drivequest.pages.Components.ProductFrameGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
@@ -37,6 +38,7 @@ fun StorePage(modifier: Modifier = Modifier) {
     var frames by remember { mutableStateOf(sampleFrames.toMutableList()) }
     var detailTarget by remember { mutableStateOf<Product?>(null) }
     var purchaseConfirmTarget by remember { mutableStateOf<Product?>(null) }
+    var showAdRemoveDialog by remember { mutableStateOf(false) } // ★追加
 
     // 商品詳細ポップアップ
     if (detailTarget != null) {
@@ -78,80 +80,121 @@ fun StorePage(modifier: Modifier = Modifier) {
         )
     }
 
-    Column(
+    // ★追加：広告非表示案内ダイアログ
+    if (showAdRemoveDialog) {
+        AdRemoveDialog(onClose = { showAdRemoveDialog = false })
+    }
+
+    // ★Boxラップで重ねる
+    Box(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
+                )
+            )
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            "ストア",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // タブバー
-        Row(
+        // ★右上にボタン設置
+        Button(
+            onClick = { showAdRemoveDialog = true },
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White.copy(alpha = 0.95f),
+                contentColor = Color(0xFF4A90E2)
+            ),
             modifier = Modifier
-                .widthIn(max = 360.dp) // 最大360dpまで。狭める
-                .background(Color.White.copy(alpha = 0.15f), shape = MaterialTheme.shapes.medium)
-                .padding(horizontal = 8.dp, vertical = 4.dp), // 左右余白も小さく
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .align(Alignment.TopEnd)
+                .padding(top = 12.dp, end = 12.dp)
+                .zIndex(2f)
         ) {
-            Button(
-                onClick = { selectedTab = StoreTab.Icon },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedTab == StoreTab.Icon) Color.White else Color(0x332A95E2),
-                    contentColor =
-                        if (selectedTab == StoreTab.Icon) Color(0xFF4A90E2) else Color.White
-                ),
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("アイコンフレーム")
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Button(
-                onClick = { selectedTab = StoreTab.Frame },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (selectedTab == StoreTab.Frame) Color.White else Color(0x332A95E2),
-                    contentColor =
-                        if (selectedTab == StoreTab.Frame) Color(0xFF4A90E2) else Color.White
-                ),
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("ナビ音声")
-            }
+            Text(
+                "広告非表示",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                lineHeight = 16.sp
+            )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        // --- ここから既存のColumn（ほぼそのまま移動でOK） ---
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                "ストア",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        when (selectedTab) {
-            StoreTab.Icon -> {
-                ProductFrameGrid(
-                    products = frames,
-                    onProductClick = { product ->
-                        detailTarget = product
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
+            // タブバー
+            Row(
+                modifier = Modifier
+                    .widthIn(max = 360.dp)
+                    .background(Color.White.copy(alpha = 0.15f), shape = MaterialTheme.shapes.medium)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = { selectedTab = StoreTab.Icon },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor =
+                            if (selectedTab == StoreTab.Icon) Color.White else Color(0x332A95E2),
+                        contentColor =
+                            if (selectedTab == StoreTab.Icon) Color(0xFF4A90E2) else Color.White
+                    ),
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("アイコンフレーム")
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Button(
+                    onClick = { selectedTab = StoreTab.Frame },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor =
+                            if (selectedTab == StoreTab.Frame) Color.White else Color(0x332A95E2),
+                        contentColor =
+                            if (selectedTab == StoreTab.Frame) Color(0xFF4A90E2) else Color.White
+                    ),
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("ナビ音声")
+                }
             }
-            StoreTab.Frame -> {
-                ProductFrameGrid(
-                    products = products,
-                    onProductClick = { product ->
-                        detailTarget = product
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            when (selectedTab) {
+                StoreTab.Icon -> {
+                    ProductFrameGrid(
+                        products = frames,
+                        onProductClick = { product ->
+                            detailTarget = product
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                StoreTab.Frame -> {
+                    ProductFrameGrid(
+                        products = products,
+                        onProductClick = { product ->
+                            detailTarget = product
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
+        // --- Columnここまで ---
     }
 }
 
@@ -188,6 +231,7 @@ fun ProductDetailDialog(
                         },
                         contentDescription = product.name,
                         modifier = Modifier.size(120.dp)
+                            .clip(RoundedCornerShape(16.dp)) // ここが重要！
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -207,10 +251,10 @@ fun ProductDetailDialog(
                     if (product.purchase == 1) {
                         Text(
                             "購入済み",
-                            color = Color.White,
+                            color = Color(0xFF4A4A4A), // グレー地なら濃いグレー文字もおすすめ
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
-                                .background(Color(0xFF616161), shape = RoundedCornerShape(8.dp))
+                                .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
                                 .padding(horizontal = 12.dp, vertical = 8.dp)
                         )
                     } else {
@@ -229,7 +273,7 @@ fun ProductDetailDialog(
                     }
                 }
             }
-            // 閉じるボタン（少し下・右にずらした例）
+            // 閉じるボタン
             IconButton(
                 onClick = onClose,
                 modifier = Modifier
@@ -241,6 +285,45 @@ fun ProductDetailDialog(
                     contentDescription = "閉じる",
                     tint = Color.Black
                 )
+            }
+        }
+    }
+}
+
+// ★追加: 広告非表示案内用ダイアログ
+@Composable
+fun AdRemoveDialog(onClose: () -> Unit) {
+    Dialog(onDismissRequest = onClose) {
+        Box(
+            modifier = Modifier
+                .background(Color.White, shape = RoundedCornerShape(18.dp))
+                .padding(24.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "広告非表示（月額契約）",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF4A90E2)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "月額180円で広告が全て非表示になります。",
+                    fontSize = 16.sp,
+                    color = Color.DarkGray
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onClose,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF4A90E2),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("購入")
+                }
             }
         }
     }

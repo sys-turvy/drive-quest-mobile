@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -28,7 +29,7 @@ fun FrameCard(
 ) {
     val corner = 16.dp
     val defaultImageUrl = "https://play-lh.googleusercontent.com/2HAZLGMx7WmmnCT5b7CAKazuEhHtTfnnCPDrAI9FY3gYsGXfvpxby0j0qj3PSixc4w"
-    val cardBgColor = if (purchase == 1) Color(0xFF616161) else Color.White
+    val cardBgColor = if (purchase == 1) Color.Gray else Color.White
 
     Box(
         modifier = modifier
@@ -58,7 +59,9 @@ fun FrameCard(
                 fontWeight = FontWeight.Normal,
                 color = if (purchase == 1) Color.White else Color.Black,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 1,                      // 最大1行
+                overflow = TextOverflow.Ellipsis   // 溢れたら省略記号
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -67,7 +70,9 @@ fun FrameCard(
                 fontWeight = FontWeight.Bold,
                 color = if (purchase == 1) Color.White else Color(0xFF000000),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 1,                      // 最大1行
+                overflow = TextOverflow.Ellipsis   // 溢れたら省略記号
             )
         }
         if (purchase == 1) {
