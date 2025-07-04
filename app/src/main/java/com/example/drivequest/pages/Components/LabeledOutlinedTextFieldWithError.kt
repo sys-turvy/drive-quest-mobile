@@ -24,24 +24,20 @@ fun LabeledOutlinedTextFieldWithError(
     labelText: String,
     value: String,
     onValueChange: (String) -> Unit,
-    isError: Boolean = false,
-    errorMessage: String = "",
+    errorMessage: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     singleLine: Boolean = true,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-
-    val shouldShowErrorText = isError && !isFocused && errorMessage.isNotEmpty()
+    val isError = (errorMessage != null)
 
     Column(
         modifier = modifier
             .width(254.dp)
     ) {
         Text(
-            text = if (shouldShowErrorText) errorMessage else " ",
-            color = if (shouldShowErrorText) MaterialTheme.colorScheme.error else Color.Transparent,
-            fontSize = 16.sp,
+            text = if (isError) errorMessage else " ",
+            color = if (isError) MaterialTheme.colorScheme.error else Color.Transparent,
+            fontSize = 12.sp,
             modifier = Modifier.padding(start = 4.dp, top = 16.dp)
         )
         OutlinedTextField(
@@ -53,7 +49,6 @@ fun LabeledOutlinedTextFieldWithError(
             isError = isError,
             keyboardOptions = keyboardOptions,
             singleLine = singleLine,
-            interactionSource = interactionSource,
         )
     }
 }

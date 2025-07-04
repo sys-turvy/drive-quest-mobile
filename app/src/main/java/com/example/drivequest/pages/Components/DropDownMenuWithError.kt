@@ -42,7 +42,7 @@ fun DropDownMenuWithError(
         Text(
             text = if (shouldShowErrorText) errorMessage else " ",
             color = if (shouldShowErrorText) MaterialTheme.colorScheme.error else Color.Transparent,
-            fontSize = 16.sp,
+            fontSize = 12.sp,
             modifier = Modifier.padding(start = 4.dp, top = 16.dp)
         )
         DropDownMenu(
@@ -53,16 +53,5 @@ fun DropDownMenuWithError(
             singleLine = singleLine,
             options = options,
         )
-//        OutlinedTextField(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            value = value,
-//            onValueChange = onValueChange,
-//            label = { Text(text = labelText, fontSize = 16.sp) },
-//            isError = isError,
-//            keyboardOptions = keyboardOptions,
-//            singleLine = singleLine,
-//            interactionSource = interactionSource,
-//        )
     }
 }
