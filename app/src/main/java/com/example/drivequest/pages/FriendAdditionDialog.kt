@@ -1,194 +1,104 @@
 package com.example.drivequest.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.drivequest.ui.theme.ErrorRed
-import com.example.drivequest.ui.theme.FontGray
+import coil.compose.AsyncImage
+import com.example.drivequest.R
 import com.example.drivequest.ui.theme.MainOrange
 
+
+//　入力したフレンドIDと一致した時
 @Composable
-fun FriendAdditionDialog(
-    UserId:String,
-    onDismiss: () -> Unit
-    ) {
-    val errorMessage = remember { mutableStateOf("") }
-    val FriendId = remember { mutableStateOf("") }
-    val FriendIdData = "111111"
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.4f)) // 背景半透明で覆う
-            .clickable(enabled = false) {} // 背景タップ無効
-    ) {
+fun FriendAdditionDialog (user: MockUser,onDismiss: () -> Unit){
+    BaseDialogContainer(onDismiss = onDismiss) {
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .width(320.dp)
-                .height(400.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color(0xFF60A3F4), Color(0xFF6FC8FB))
-                    )
-                )
-                .padding(24.dp)
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                IconButton(
-                    onClick = onDismiss,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .size(40.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "閉じる",
-                        tint = Color.White,
-                        modifier = Modifier.size(33.dp)
-                    )
-                }
-            }
+                .height(160.dp)
+                .width(250.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+                .padding(top=20.dp)
+        ){
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 50.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ){
-                Text(
-                    "友達登録",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                // ユーザーアイコン
+                Box(
                     modifier = Modifier
-                        .padding(top = 20.dp)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                //
-                CopyableIdRow(UserId)
-                Spacer(modifier = Modifier.height(35.dp))
-                Box(modifier = Modifier.height(20.dp)) {
-                    if (errorMessage.value.isNotBlank()) {
-                        Text(
-                            text = errorMessage.value,
-                            color = ErrorRed,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                        .size(62.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                ) {
+                    AsyncImage(
+                        model = user.imageUrl,
+                        contentDescription = "ユーザーアイコン",
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(R.drawable.placeholder_icon),
+                        error = painterResource(R.drawable.error_icon),
+                        modifier = Modifier.matchParentSize()
+                    )
+
                 }
-                Spacer(modifier = Modifier.height(5.dp))
-                OutlinedTextField(
-                    value = FriendId.value,
-                    onValueChange = { FriendId.value = it },
-                    placeholder = {
-                        Text(
-                            "友達のIDを入力",
-                            style = TextStyle(color = FontGray)
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    singleLine = true,
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .width(250.dp)
-                        .background(Color.White, RoundedCornerShape(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+                // ユーザー名
+                Text(
+                    text = user.name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = Color.Black
                 )
-                Spacer(modifier = Modifier.height(25.dp))
-                //検索ボタン
-                onSearchClick(FriendId.value, errorMessage,FriendIdData)
             }
         }
+        Spacer(modifier = Modifier.height(20.dp))
+        //フレンド追加ボタン
+        Button(
+            //フレンド追加処理
+            onClick = {
 
-    }
-}
-
-@Composable
-fun CopyableIdRow(userId: String) {
-    val clipboardManager = LocalClipboardManager.current
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            "あなたのID：$userId",
-            color = Color.White,
-            fontSize = 15.sp
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Icon(
-            imageVector = Icons.Default.ContentCopy,
-            contentDescription = "コピー",
-            tint = Color.White,
+            },
             modifier = Modifier
-                .size(18.dp)
-                .clickable {
-                    clipboardManager.setText(AnnotatedString(userId))
-                }
-        )
+                .height(40.dp)
+                .width(100.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MainOrange),
+            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+            shape = MaterialTheme.shapes.small, // 角の丸み（お好みで）
+
+        ) {
+            Text(
+                "追加",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
-//検索ボタン
-@Composable
-fun onSearchClick(FriendId:String , errorMessage: MutableState<String>,FriendIdData:String){
-    Button(
-        onClick = {
-            if(FriendId.isBlank()){
-                errorMessage.value ="IDを入力してください"
-            }else if(FriendId != FriendIdData){
-                errorMessage.value ="一致するユーザーが見つかりませんでした"
-            }else{
-                //ここにIDが見つかった際の処理を書く
-            }
-        },
-        modifier = Modifier
-            .width(100.dp)
-            .height(40.dp),
-        shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = MainOrange)
-    ) {
-        Text(
-            "検索",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
-        )
-    }
-}
+
+
