@@ -66,15 +66,16 @@ fun FriendListPage() {
             title = "ブロンズドライバー"
         )
     }
-    //ダイアログ表示用の状態
-    var showDialog by remember { mutableStateOf(false) }
+    //フレンド検索ダイアログ表示用状態
+    var showSearchDialog by remember { mutableStateOf(false) }
+    var selectedUser by remember { mutableStateOf<MockUser?>(null) }
     GradientBackground {
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
                 FriendListTopAppBar(
                     onBackClick = {},
-                    onAddFriendClick = {showDialog = true},
+                    onAddFriendClick = {showSearchDialog = true},
                     scrollBehavior =scrollBehavior
                 )
             }
@@ -85,14 +86,27 @@ fun FriendListPage() {
                 modifier = Modifier.padding(paddingValues)
             )
         }
-        //ダイアログ表示
-        if(showDialog){
-            FriendAdditionDialog(
+        //フレンド検索ダイアログ表示
+        if(showSearchDialog){
+            FriendSearchDialog(
                 UserId = "123456",
                 onDismiss = {
-                    showDialog =false
+                    showSearchDialog =false
+                },
+                onUserFound = { matchedUser ->
+                    selectedUser = matchedUser       // ユーザーをセット
+                    showSearchDialog = false         // 検索ダイアログ閉じる
                 }
             )
+        }
+        //フレンド追加ダイアログ表示
+        if(selectedUser != null){
+            selectedUser?.let { user ->
+                FriendAdditionDialog(
+                    user = user,
+                    onDismiss = { selectedUser = null }
+                )
+            }
         }
     }
 }
@@ -139,7 +153,8 @@ fun GradientBackground(
     content: @Composable () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
@@ -281,7 +296,7 @@ fun TitleItem(
                 color = color,
                 shape = RoundedCornerShape(20.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 2.dp )
+            .padding(horizontal = 16.dp, vertical = 2.dp)
     ){
         Text(
             text = title,
