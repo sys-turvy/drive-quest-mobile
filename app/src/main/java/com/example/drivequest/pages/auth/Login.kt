@@ -1,4 +1,6 @@
 package com.example.drivequest.pages.auth
+
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,10 +37,36 @@ import com.example.drivequest.pages.Components.UnderlineText
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
+import com.example.drivequest.viewmodel.LoginPageViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavController){
+fun LoginPage(
+    navController: NavController,
+    loginPageViewModel: LoginPageViewModel = hiltViewModel()
+){
+    val context = LocalContext.current
+    val loginSuccessEvent = loginPageViewModel.loginSuccessEvent
+    val loginErrorEvent = loginPageViewModel.loginErrorEvent
+
+    LaunchedEffect(Unit) {
+        loginSuccessEvent.collect {
+            navController.navigate("main_graph") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        loginErrorEvent.collect { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -65,19 +92,17 @@ fun LoginPage(navController: NavController){
                 .padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center
         ) {
-            LoginForm(navController)
+            LoginForm(navController, loginPageViewModel)
         }
     }
 }
 
 @Composable
-fun LoginForm(navController: NavController) {
-    val email = remember{ mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val showEmailError = remember { mutableStateOf(false) }
-    val showPasswordError = remember { mutableStateOf(false) }
-    val emailErrorMessage = remember { mutableStateOf("") }
-    val passwordErrorMessage = remember { mutableStateOf("") }
+fun LoginForm(
+    navController: NavController,
+    loginPageViewModel: LoginPageViewModel
+) {
+    val pageState by loginPageViewModel.pageState.collectAsState()
 
     FormCard(
         top = {
@@ -93,26 +118,24 @@ fun LoginForm(navController: NavController) {
         },
         inputs = {
             LabeledOutlinedTextFieldWithError(
-                value = email.value,
+                value = pageState.emailInput,
                 onValueChange = {
-                    email.value = it
+                    loginPageViewModel.updateEmailInput(it)
                 },
                 labelText = "メールアドレス",
-                isError = showEmailError.value,
-                errorMessage = emailErrorMessage.value,
+                errorMessage = pageState.emailValidationError,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 )
             )
             LabeledOutlinedTextFieldWithError(
-                value = password.value,
+                value = pageState.passwordInput,
                 onValueChange = {
-                    password.value = it
+                    loginPageViewModel.updatePasswordInput(it)
                 },
                 labelText = "パスワード",
-                isError = showPasswordError.value,
-                errorMessage = passwordErrorMessage.value,
+                errorMessage = pageState.passwordValidationError,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
@@ -120,14 +143,19 @@ fun LoginForm(navController: NavController) {
             )
         },
         button = {
-            ActionButton(
-                text = "ログイン",
-                onClick = {},
-                contentPadding = PaddingValues(
-                    horizontal = 56.dp,
-                    vertical = 12.dp
+            if (pageState.isAuthenticating) {
+                CircularProgressIndicator(color = Color(0xFF4A90E2))
+            } else {
+                ActionButton(
+                    text = "ログイン",
+                    enabled = pageState.isLoginEnabled,
+                    onClick = {loginPageViewModel.onLoginClicked()},
+                    contentPadding = PaddingValues(
+                        horizontal = 56.dp,
+                        vertical = 12.dp
+                    )
                 )
-            )
+            }
         },
         footerContent = {
             Column(

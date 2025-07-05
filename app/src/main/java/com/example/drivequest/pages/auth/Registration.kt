@@ -70,15 +70,12 @@ fun Registration(navController: NavController){
 @Composable
 fun RegistrationForm(navController: NavController) {
     val email = remember{ mutableStateOf("") }
-    val showEmailError = remember { mutableStateOf(false) }
     val emailErrorMessage = remember { mutableStateOf("") }
 
     val password = remember { mutableStateOf("") }
-    val showPasswordError = remember { mutableStateOf(false) }
     val passwordErrorMessage = remember { mutableStateOf("") }
 
     val confirmationPassword = remember { mutableStateOf("") }
-    val showConfirmationPasswordError = remember { mutableStateOf(false) }
     val confirmationPasswordErrorMessage = remember { mutableStateOf("") }
 
     FormCard(
@@ -100,7 +97,6 @@ fun RegistrationForm(navController: NavController) {
                     email.value = it
                 },
                 labelText = "メールアドレス",
-                isError = showEmailError.value,
                 errorMessage = emailErrorMessage.value,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -113,7 +109,6 @@ fun RegistrationForm(navController: NavController) {
                     password.value = it
                 },
                 labelText = "パスワード",
-                isError = showPasswordError.value,
                 errorMessage = passwordErrorMessage.value,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -126,7 +121,6 @@ fun RegistrationForm(navController: NavController) {
                     confirmationPassword.value = it
                 },
                 labelText = "パスワード確認",
-                isError = showPasswordError.value || showConfirmationPasswordError.value,
                 errorMessage = confirmationPasswordErrorMessage.value,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,

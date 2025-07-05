@@ -18,6 +18,7 @@ fun ActionButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
 ) {
     Button(
@@ -25,7 +26,8 @@ fun ActionButton(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MainBlue),
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
+        enabled = enabled
     ) {
         Text(
             text = text,

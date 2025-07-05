@@ -122,7 +122,6 @@ fun AuthenticationForm(navController: NavController) {
                     code.value = it
                 },
                 labelText = "認証コード",
-                isError = codeError.value,
                 errorMessage = codeErrorMessage.value,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
