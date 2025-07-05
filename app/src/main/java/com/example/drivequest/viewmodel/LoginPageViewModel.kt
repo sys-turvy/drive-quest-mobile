@@ -150,33 +150,4 @@ class LoginPageViewModel @Inject constructor(
             isLoginEnabled = false
         )
     }
-
-
-//    private val repository = AuthRepository()
-//
-//    private val _isLoading = MutableStateFlow(false)
-//    val isLoading: StateFlow<Boolean> = _isLoading
-//
-//    private val _loginSuccess = MutableStateFlow(false)
-//    val loginSuccess: StateFlow<Boolean> = _loginSuccess
-//
-//    private val _errorMessage = MutableStateFlow<String?>(null)
-//    val errorMessage: StateFlow<String?> = _errorMessage
-//
-//    fun login(email: String, password: String) {
-//        _isLoading.value = true
-//        _errorMessage.value = null
-//
-//        viewModelScope.launch {
-//            val result = repository.login(email, password)
-//            _isLoading.value = false
-//
-//            result.onSuccess {
-//                _loginSuccess.value = true
-//                // 必要ならトークン保存（DataStoreなど）もここで
-//            }.onFailure {
-//                _errorMessage.value = "ログイン失敗：${it.message}"
-//            }
-//        }
-//    }
 }
