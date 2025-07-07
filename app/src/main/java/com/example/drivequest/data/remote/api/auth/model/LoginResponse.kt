@@ -1,6 +1,6 @@
 package com.example.drivequest.data.remote.api.auth.model
 
-import com.example.drivequest.data.remote.api.auth.model.TokenPair
+import com.example.drivequest.domain.model.TokenPair
 
 data class LoginResponse(
     val tokenPair: TokenPair,
