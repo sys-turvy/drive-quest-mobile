@@ -1,6 +1,5 @@
-package com.example.drivequest.pages
+package com.example.drivequest.presentation.drivehistory
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,7 +26,7 @@ import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @Composable
-fun DriveHistoryPage(modifier: Modifier = Modifier) {
+fun DriveHistoryScreen(modifier: Modifier = Modifier) {
     val logs = listOf(
         DriveLog("6/17", "8:00", "9:15", 40,23.5),
         DriveLog("6/16", "13:20", "14:05", 30,12.3),
@@ -123,7 +121,7 @@ data class DriveLog(
 fun DriveHistoryPagePreview() {
     DriveQuestTheme {
         GradientBackground {
-            DriveHistoryPage()
+            DriveHistoryScreen()
         }
     }
 }
