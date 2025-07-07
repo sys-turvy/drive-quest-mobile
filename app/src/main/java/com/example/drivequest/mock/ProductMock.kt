@@ -1,4 +1,4 @@
-package com.example.drivequest.data
+package com.example.drivequest.mock
 
 val sampleProducts = listOf(
         Product(

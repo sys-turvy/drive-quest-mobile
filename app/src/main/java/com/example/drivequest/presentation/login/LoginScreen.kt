@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.auth
+package com.example.drivequest.presentation.login
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -37,7 +37,6 @@ import com.example.drivequest.pages.Components.UnderlineText
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
-import com.example.drivequest.viewmodel.LoginPageViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
@@ -45,13 +44,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(
+fun LoginScreen(
     navController: NavController,
-    loginPageViewModel: LoginPageViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ){
     val context = LocalContext.current
-    val loginSuccessEvent = loginPageViewModel.loginSuccessEvent
-    val loginErrorEvent = loginPageViewModel.loginErrorEvent
+    val loginSuccessEvent = viewModel.loginSuccessEvent
+    val loginErrorEvent = viewModel.loginErrorEvent
 
     LaunchedEffect(Unit) {
         loginSuccessEvent.collect {
@@ -92,7 +91,7 @@ fun LoginPage(
                 .padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center
         ) {
-            LoginForm(navController, loginPageViewModel)
+            LoginForm(navController, viewModel)
         }
     }
 }
@@ -100,9 +99,12 @@ fun LoginPage(
 @Composable
 fun LoginForm(
     navController: NavController,
-    loginPageViewModel: LoginPageViewModel
+    viewModel: LoginViewModel
 ) {
-    val pageState by loginPageViewModel.pageState.collectAsState()
+    val emailInputState by viewModel.emailInputState.collectAsState()
+    val passwordInputState by viewModel.passwordInputState.collectAsState()
+    var isLoginEnabled = viewModel.isLoginEnabled.value
+    val uiState by viewModel.buttonState.collectAsState()
 
     FormCard(
         top = {
@@ -118,24 +120,24 @@ fun LoginForm(
         },
         inputs = {
             LabeledOutlinedTextFieldWithError(
-                value = pageState.emailInput,
+                value = emailInputState.input,
                 onValueChange = {
-                    loginPageViewModel.updateEmailInput(it)
+                    viewModel.updateEmailInput(it)
                 },
                 labelText = "メールアドレス",
-                errorMessage = pageState.emailValidationError,
+                errorMessage = emailInputState.validationError,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 )
             )
             LabeledOutlinedTextFieldWithError(
-                value = pageState.passwordInput,
+                value = passwordInputState.input,
                 onValueChange = {
-                    loginPageViewModel.updatePasswordInput(it)
+                    viewModel.updatePasswordInput(it)
                 },
                 labelText = "パスワード",
-                errorMessage = pageState.passwordValidationError,
+                errorMessage = passwordInputState.validationError,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
@@ -143,13 +145,12 @@ fun LoginForm(
             )
         },
         button = {
-            if (pageState.isAuthenticating) {
-                CircularProgressIndicator(color = Color(0xFF4A90E2))
-            } else {
-                ActionButton(
+            when (uiState) {
+                is LoginViewModel.ButtonState.Loading -> CircularProgressIndicator(color = Color(0xFF4A90E2))
+                is LoginViewModel.ButtonState.Idle -> ActionButton(
                     text = "ログイン",
-                    enabled = pageState.isLoginEnabled,
-                    onClick = {loginPageViewModel.onLoginClicked()},
+                    enabled = isLoginEnabled,
+                    onClick = { viewModel.onLoginClicked() },
                     contentPadding = PaddingValues(
                         horizontal = 56.dp,
                         vertical = 12.dp
@@ -195,7 +196,7 @@ fun LoginPagePreview() {
     }
     DriveQuestTheme {
         GradientBackground {
-            LoginPage(navController)
+            LoginScreen(navController)
         }
     }
 }

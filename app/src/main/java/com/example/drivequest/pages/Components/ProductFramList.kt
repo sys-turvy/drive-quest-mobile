@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.drivequest.data.Product
+import com.example.drivequest.mock.Product
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -14,18 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
-import com.example.drivequest.data.Product
-import com.example.drivequest.data.sampleProducts
-import com.example.drivequest.data.sampleFrames
+import com.example.drivequest.mock.Product
+import com.example.drivequest.mock.sampleProducts
+import com.example.drivequest.mock.sampleFrames
 import com.example.drivequest.pages.Components.ProductFrameGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.ui.theme.DriveQuestTheme
 

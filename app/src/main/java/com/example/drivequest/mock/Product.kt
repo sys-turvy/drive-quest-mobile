@@ -1,4 +1,4 @@
-package com.example.drivequest.data
+package com.example.drivequest.mock
 
 data class Product(
     val purchase: Int,
