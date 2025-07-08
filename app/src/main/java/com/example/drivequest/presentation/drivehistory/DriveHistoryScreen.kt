@@ -35,7 +35,7 @@ fun DriveHistoryScreen(
     val driveHistories by driveHistoryViewModel.driveHistories.collectAsState()
     val errorMessage by driveHistoryViewModel.error.collectAsState()
 
-    // バナーの高さを取得
+    // バナーの高さ取得部分はそのままでも可
     val context = LocalContext.current
     val density = LocalDensity.current
     val displayMetrics = context.resources.displayMetrics
@@ -48,28 +48,36 @@ fun DriveHistoryScreen(
         driveHistoryViewModel.loadHistories()
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    // ここからBoxでラップ
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
-        Text(
-            text = "運転履歴",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(16.dp),
-            color = Color.White
-        )
-        if(errorMessage != null) {
-            Text("エラー: $errorMessage", color = Color.Red)
-        } else {
-            DriveLogList(driveHistories)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = bannerDpHeight), // バナーの高さ分だけ下にパディング
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "運転履歴",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(16.dp),
+                color = Color.White
+            )
+            if (errorMessage != null) {
+                Text("エラー: $errorMessage", color = Color.Red)
+            } else {
+                DriveLogList(driveHistories)
+            }
         }
+        BottomBannerAdWithDummy(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
     }
-    BottomBannerAdWithDummy(
-        modifier = Modifier.align(Alignment.BottomCenter)
-    )
 }
+
 
 @Composable
 fun DriveLogList(driveHistories: List<DriveHistoryUiState>) {
@@ -101,8 +109,6 @@ fun DriveLogItem(driveHistory: DriveHistoryUiState) {
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
-                Text(
-                    text = "${log.startTime}〜${log.endTime}",
                 Text(text = "${driveHistory.startTime}〜${driveHistory.endTime}",
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
