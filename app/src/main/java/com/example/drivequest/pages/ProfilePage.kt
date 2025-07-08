@@ -1,5 +1,6 @@
 package com.example.drivequest.pages
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,30 +20,38 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import coil.compose.AsyncImage
+import com.example.drivequest.MainScreen
+import kotlin.math.roundToInt
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import coil.compose.AsyncImage
-import com.example.drivequest.MainScreen
-import com.example.drivequest.pages.auth.FriendListPage
-import com.example.drivequest.pages.auth.LoginPage
-import kotlin.math.roundToInt
+import com.example.drivequest.pages.FriendListPage
+import com.example.drivequest.presentation.login.LoginScreen
 
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier,navController: NavHostController) {
+fun ProfilePage(modifier: Modifier = Modifier,
+//                navController: NavHostController
+) {
     var activeDialog by remember { mutableStateOf<DialogType?>(null) }
     var currentFrame by remember { mutableStateOf<Product?>(null) }
     var currentVoice by remember { mutableStateOf<Product?>(null) }
@@ -66,7 +75,6 @@ fun ProfilePage(modifier: Modifier = Modifier,navController: NavHostController) 
             modifier = Modifier.padding(16.dp),
             color = Color.White
         )
-
         // プロフィール
         Card(
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -118,7 +126,7 @@ fun ProfilePage(modifier: Modifier = Modifier,navController: NavHostController) 
                 .height(100.dp)
                 .padding(20.dp)
                 .clickable {
-                    navController.navigate("friend")
+//                    navController.navigate("friend")
                 }
         ) {
             Row(
@@ -189,7 +197,7 @@ fun ProfilePage(modifier: Modifier = Modifier,navController: NavHostController) 
         }
         Button(
             onClick = {
-                navController.navigate("login")
+//                navController.navigate("login")
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFFF1616),
@@ -749,14 +757,14 @@ fun AchievementDialog(
     }
 }
 
-@Composable
-fun Navigation(navController: NavHostController) {
-    NavHost(navController, startDestination = "main") {
-        composable("main") { MainScreen(navController = navController) }
-        composable("friend") { FriendListPage(navController) }
-        composable("login") { LoginPage(navController) }
-    }
-}
+//@Composable
+//fun Navigation(navController: NavHostController) {
+//    NavHost(navController, startDestination = "main") {
+//        composable("main") { MainScreen(navController = navController) }
+//        composable("friend") { FriendListPage(navController) }
+//        composable("login") { LoginScreen(navController) }
+//    }
+//}
 
 
 sealed class DialogType {
