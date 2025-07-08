@@ -1,5 +1,6 @@
 package com.example.drivequest.pages
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,10 +27,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.Components.BottomBannerAdWithDummy
 import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.google.android.gms.ads.AdSize
 
 enum class StoreTab { Icon, Frame }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun StorePage(modifier: Modifier = Modifier) {
     var selectedTab by remember { mutableStateOf(StoreTab.Frame) }
@@ -35,9 +41,8 @@ fun StorePage(modifier: Modifier = Modifier) {
     var frames by remember { mutableStateOf(sampleFrames.toMutableList()) }
     var detailTarget by remember { mutableStateOf<Product?>(null) }
     var purchaseConfirmTarget by remember { mutableStateOf<Product?>(null) }
-    var showAdRemoveDialog by remember { mutableStateOf(false) } // ★追加
+    var showAdRemoveDialog by remember { mutableStateOf(false) }
 
-    // 商品詳細ポップアップ
     if (detailTarget != null) {
         ProductDetailDialog(
             product = detailTarget!!,
@@ -49,7 +54,6 @@ fun StorePage(modifier: Modifier = Modifier) {
         )
     }
 
-    // 購入の最終確認ダイアログ
     if (purchaseConfirmTarget != null) {
         AlertDialog(
             onDismissRequest = { purchaseConfirmTarget = null },
@@ -77,12 +81,10 @@ fun StorePage(modifier: Modifier = Modifier) {
         )
     }
 
-    // ★追加：広告非表示案内ダイアログ
     if (showAdRemoveDialog) {
         AdRemoveDialog(onClose = { showAdRemoveDialog = false })
     }
 
-    // ★Boxラップで重ねる
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -92,7 +94,7 @@ fun StorePage(modifier: Modifier = Modifier) {
                 )
             )
     ) {
-        // ★右上にボタン設置
+        // 右上「広告非表示」ボタン
         Button(
             onClick = { showAdRemoveDialog = true },
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
@@ -114,10 +116,21 @@ fun StorePage(modifier: Modifier = Modifier) {
             )
         }
 
-        // --- ここから既存のColumn（ほぼそのまま移動でOK） ---
+        // メインUI
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(bottom = with(LocalDensity.current) {
+                    // BottomBannerAdWithDummy用バナー高さ
+                    val context = LocalContext.current
+                    val displayMetrics = context.resources.displayMetrics
+                    val adWidthPixels = displayMetrics.widthPixels
+                    val adWidthDp = (adWidthPixels / displayMetrics.density).toInt()
+                    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+                        context, adWidthDp
+                    )
+                    adSize.getHeightInPixels(context).toDp()
+                }),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(32.dp))
@@ -190,7 +203,13 @@ fun StorePage(modifier: Modifier = Modifier) {
                 }
             }
         }
-        // --- Columnここまで ---
+
+        // 下部バナー＋高さダミー
+        BottomBannerAdWithDummy(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .zIndex(3f)
+        )
     }
 }
 
@@ -206,7 +225,6 @@ fun ProductDetailDialog(
                 .fillMaxWidth(0.6f)
                 .wrapContentHeight()
         ) {
-            // メインコンテンツ
             Box(
                 modifier = Modifier
                     .background(Color.White, shape = RoundedCornerShape(16.dp))
@@ -226,8 +244,9 @@ fun ProductDetailDialog(
                             "https://play-lh.googleusercontent.com/2HAZLGMx7WmmnCT5b7CAKazuEhHtTfnnCPDrAI9FY3gYsGXfvpxby0j0qj3PSixc4w"
                         },
                         contentDescription = product.name,
-                        modifier = Modifier.size(120.dp)
-                            .clip(RoundedCornerShape(16.dp)) // ここが重要！
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(RoundedCornerShape(16.dp))
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -247,7 +266,7 @@ fun ProductDetailDialog(
                     if (product.purchase == 1) {
                         Text(
                             "購入済み",
-                            color = Color(0xFF4A4A4A), // グレー地なら濃いグレー文字もおすすめ
+                            color = Color(0xFF4A4A4A),
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
@@ -269,7 +288,6 @@ fun ProductDetailDialog(
                     }
                 }
             }
-            // 閉じるボタン
             IconButton(
                 onClick = onClose,
                 modifier = Modifier
@@ -286,7 +304,6 @@ fun ProductDetailDialog(
     }
 }
 
-// ★追加: 広告非表示案内用ダイアログ
 @Composable
 fun AdRemoveDialog(onClose: () -> Unit) {
     Dialog(onDismissRequest = onClose) {

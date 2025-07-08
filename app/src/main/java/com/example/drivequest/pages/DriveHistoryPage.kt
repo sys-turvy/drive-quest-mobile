@@ -1,22 +1,15 @@
 package com.example.drivequest.pages
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -25,28 +18,50 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.Components.BottomBannerAdWithDummy // ★ここを追加！
 import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.google.android.gms.ads.AdSize
 
 @Composable
 fun DriveHistoryPage(modifier: Modifier = Modifier) {
     val logs = listOf(
-        DriveLog("6/17", "8:00", "9:15", 40,23.5),
-        DriveLog("6/16", "13:20", "14:05", 30,12.3),
+        DriveLog("6/18", "9:20", "10:20", 60, 70.5),
+        DriveLog("6/17", "8:00", "9:15", 40, 23.5),
+        DriveLog("6/16", "13:20", "14:05", 30, 12.3),
     )
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "運転履歴",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(16.dp),
-            color = Color.White
 
+    // バナーの高さを取得
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val displayMetrics = context.resources.displayMetrics
+    val adWidthPixels = displayMetrics.widthPixels
+    val adWidthDp = (adWidthPixels / displayMetrics.density).toInt()
+    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
+    val bannerDpHeight = with(density) { adSize.getHeightInPixels(context).toDp() }
+
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = bannerDpHeight), // バナー分のスペースを空ける
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "運転履歴",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(16.dp),
+                color = Color.White
+            )
+            DriveLogList(logs)
+        }
+
+        // ここで共通コンポーネントを呼び出し
+        BottomBannerAdWithDummy(
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
-        DriveLogList(logs)
     }
 }
 
@@ -80,14 +95,15 @@ fun DriveLogItem(log: DriveLog) {
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
-                Text(text = "${log.startTime}〜${log.endTime}",
+                Text(
+                    text = "${log.startTime}〜${log.endTime}",
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .width(120.dp),
                     color = Color(0xFF4A90E2),
-
                 )
             }
+            Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
                     text = buildAnnotatedString {

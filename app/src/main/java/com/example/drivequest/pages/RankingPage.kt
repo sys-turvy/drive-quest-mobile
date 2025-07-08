@@ -13,27 +13,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.testing.TestNavHostController
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.Components.BottomBannerAdWithDummy
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import androidx.compose.material.icons.filled.Share
 import android.content.Intent
-
+import com.google.android.gms.ads.AdSize
 
 @Composable
 fun RankingPage(modifier: Modifier = Modifier) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
-// TODO: 仮データ
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val weeklyRanking = listOf(
         Triple("ユーザーA", Icons.Default.Person, 100),
         Triple("ユーザーB", Icons.Default.Person, 99),
@@ -54,42 +52,60 @@ fun RankingPage(modifier: Modifier = Modifier) {
     val myRank = selectedRanking.indexOfFirst { it.first == myName } + 1
     val myScore = selectedRanking.find { it.first == myName }?.third ?: 0
 
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "ランキング",
-            fontSize = 24.sp,
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
-        )
+    // バナー高さ
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val displayMetrics = context.resources.displayMetrics
+    val adWidthPixels = displayMetrics.widthPixels
+    val adWidthDp = (adWidthPixels / displayMetrics.density).toInt()
+    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
+    val bannerDpHeight = with(density) { adSize.getHeightInPixels(context).toDp() }
 
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White,
-            ),
+    Box(
+        modifier = modifier.fillMaxSize()
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(525.dp)
-                .padding(start = 20.dp, end = 20.dp,bottom = 10.dp)
+                .fillMaxSize()
+                .padding(bottom = bannerDpHeight),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Text(
+                text = "ランキング",
+                fontSize = 24.sp,
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White
+            )
+
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
             ) {
-                RankingScreen(
-                    selectedTabIndex = selectedTabIndex,
-                    onTabChange = { selectedTabIndex = it },
-                    monthlyRanking = monthlyRanking,
-                    weeklyRanking = weeklyRanking
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    RankingScreen(
+                        selectedTabIndex = selectedTabIndex,
+                        onTabChange = { selectedTabIndex = it },
+                        monthlyRanking = monthlyRanking,
+                        weeklyRanking = weeklyRanking
+                    )
+                }
             }
+
+            MyRank(myRank = myRank, myName = myName, myScore = myScore)
         }
 
-        MyRank(myRank = myRank, myName = myName, myScore = myScore)
+        BottomBannerAdWithDummy(
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -207,9 +223,6 @@ fun MyRank(myRank: Int, myName: String, myScore: Int) {
         }
     }
 }
-
-
-
 
 @Composable
 fun Ranking(rankingItems: List<Triple<String, ImageVector, Int>>) {

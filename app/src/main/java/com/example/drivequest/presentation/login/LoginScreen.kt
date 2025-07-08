@@ -2,22 +2,11 @@ package com.example.drivequest.presentation.login
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -37,9 +26,6 @@ import com.example.drivequest.pages.Components.UnderlineText
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.example.drivequest.ui.theme.MainBlue
 import com.example.drivequest.ui.theme.MainOrange
-import androidx.compose.runtime.getValue
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +45,6 @@ fun LoginScreen(
             }
         }
     }
-
     LaunchedEffect(Unit) {
         loginErrorEvent.collect { errorMessage ->
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -82,12 +67,11 @@ fun LoginScreen(
                     )
                 }
             )
-        }
+        },
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 0.dp)
                 .padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center
         ) {
@@ -103,17 +87,14 @@ fun LoginForm(
 ) {
     val emailInputState by viewModel.emailInputState.collectAsState()
     val passwordInputState by viewModel.passwordInputState.collectAsState()
-    var isLoginEnabled = viewModel.isLoginEnabled.value
+    val isLoginEnabled = viewModel.isLoginEnabled.value
     val uiState by viewModel.buttonState.collectAsState()
 
     FormCard(
         top = {
             UnderlineText(
                 "ログイン",
-                modifier = Modifier
-                    .padding(
-                        bottom = 32.dp
-                    ),
+                modifier = Modifier.padding(bottom = 32.dp),
                 textColor = Color.Gray,
                 underlineColor = Color.Gray
             )
@@ -121,9 +102,7 @@ fun LoginForm(
         inputs = {
             LabeledOutlinedTextFieldWithError(
                 value = emailInputState.input,
-                onValueChange = {
-                    viewModel.updateEmailInput(it)
-                },
+                onValueChange = { viewModel.updateEmailInput(it) },
                 labelText = "メールアドレス",
                 errorMessage = emailInputState.validationError,
                 keyboardOptions = KeyboardOptions(
@@ -133,9 +112,7 @@ fun LoginForm(
             )
             LabeledOutlinedTextFieldWithError(
                 value = passwordInputState.input,
-                onValueChange = {
-                    viewModel.updatePasswordInput(it)
-                },
+                onValueChange = { viewModel.updatePasswordInput(it) },
                 labelText = "パスワード",
                 errorMessage = passwordInputState.validationError,
                 keyboardOptions = KeyboardOptions(
@@ -151,33 +128,25 @@ fun LoginForm(
                     text = "ログイン",
                     enabled = isLoginEnabled,
                     onClick = { viewModel.onLoginClicked() },
-                    contentPadding = PaddingValues(
-                        horizontal = 56.dp,
-                        vertical = 12.dp
-                    )
+                    contentPadding = PaddingValues(horizontal = 56.dp, vertical = 12.dp)
                 )
             }
         },
         footerContent = {
             Column(
-                modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "新規登録はこちら",
-                    modifier = Modifier
-                        .clickable{
-                            navController.navigate("registration")
-                        },
+                    modifier = Modifier.clickable { navController.navigate("registration") },
                     color = MainOrange,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
                     text = "パスワードを忘れた方",
-                    modifier = Modifier
-                        .clickable{},
+                    modifier = Modifier.clickable {},
                     fontSize = 13.sp,
                     color = MainBlue,
                     fontWeight = FontWeight.SemiBold,
