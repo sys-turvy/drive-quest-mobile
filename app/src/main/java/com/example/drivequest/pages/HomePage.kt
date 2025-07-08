@@ -47,14 +47,6 @@ import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import com.example.drivequest.view_model.HomeViewModel
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.testing.TestNavHostController
-import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.ui.theme.DriveQuestTheme
 
 
 @SuppressLint("MissingPermission")
