@@ -44,9 +44,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavHostController
-import com.example.drivequest.pages.FriendListPage
-import com.example.drivequest.presentation.login.LoginScreen
+//import androidx.navigation.NavHostController
+//import com.example.drivequest.pages.FriendListPage
+//import com.example.drivequest.presentation.login.LoginScreen
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier,

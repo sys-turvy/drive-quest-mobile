@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
-import com.example.drivequest.pages.Navigation
 import com.example.drivequest.ui.theme.DriveQuestTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,8 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DriveQuestTheme {
-                val navController = rememberNavController()
-                Navigation(navController)
+                MainScreen()
             }
         }
     }

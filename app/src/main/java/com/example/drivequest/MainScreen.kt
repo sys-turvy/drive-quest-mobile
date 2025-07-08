@@ -33,7 +33,7 @@ import com.example.drivequest.pages.ProfilePage
 
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier,navController: NavHostController) {
+fun MainScreen(modifier: Modifier = Modifier) {
 
 
     val navItemList = listOf(
@@ -75,18 +75,18 @@ fun MainScreen(modifier: Modifier = Modifier,navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex,navController = navController)
+        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex)
     }
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int,navController: NavHostController) {
+fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
     Column(modifier = modifier.fillMaxSize()) {
         when (selectedIndex) {
             0 -> RankingPage()
             1 -> StorePage()
             2 -> HomePage()
-            3 -> ProfilePage(navController = navController)
+            3 -> ProfilePage()
             4 -> DriveHistoryPage()
         }
     }
