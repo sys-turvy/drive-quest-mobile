@@ -11,7 +11,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.google.android.libraries.places.api.Places
+import androidx.activity.enableEdgeToEdge
+import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.google.android.gms.ads.MobileAds
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     // パーミッションのコールバックを登録
@@ -59,9 +65,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupUI() {
+        MobileAds.initialize(this)  // 広告表示の初期化
+        enableEdgeToEdge()
         setContent {
             DriveQuestTheme {
-                MainScreen()
+                GradientBackground {
+                    AppEntryPoint()
+                }
             }
         }
     }

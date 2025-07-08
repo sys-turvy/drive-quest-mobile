@@ -1,9 +1,23 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+
+val apiUrl = localProperties.getProperty("API_URL") ?: "https://default-api.com/"
+val ad_id =  localProperties.getProperty("ADMOB_BANNER_ID") ?: "123092"
 
 android {
     namespace = "com.example.drivequest"
@@ -17,6 +31,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_URL", "\"${apiUrl}\"")
+        buildConfigField("String", "ADMOB_BANNER_ID", "\"${ad_id}\"")
     }
 
     buildTypes {
@@ -52,6 +68,20 @@ secrets {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-ads:24.4.0")
+    implementation("androidx.compose.foundation:foundation:1.8.3")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation(libs.androidx.tracing.perfetto.handshake)
+    debugImplementation("androidx.navigation:navigation-testing:2.7.7")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.moshi:moshi:1.15.1")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
