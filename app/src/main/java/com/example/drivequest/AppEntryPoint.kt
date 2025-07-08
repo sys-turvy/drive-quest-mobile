@@ -22,7 +22,7 @@ fun AppEntryPoint() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination ="auth_graph"
+        startDestination ="auth_graph"  // auth_graph
     ) {
         navigation(startDestination = "login", route = "auth_graph") {
             composable("login") {

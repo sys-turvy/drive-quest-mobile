@@ -1,16 +1,9 @@
 package com.example.drivequest.presentation.drivehistory
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -27,8 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.Components.BottomBannerAdWithDummy // ★ここを追加！
 import com.example.drivequest.presentation.drivehistory.model.DriveHistoryUiState
 import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.google.android.gms.ads.AdSize
 
 @Composable
 fun DriveHistoryScreen(
@@ -37,6 +34,15 @@ fun DriveHistoryScreen(
 ) {
     val driveHistories by driveHistoryViewModel.driveHistories.collectAsState()
     val errorMessage by driveHistoryViewModel.error.collectAsState()
+
+    // バナーの高さを取得
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val displayMetrics = context.resources.displayMetrics
+    val adWidthPixels = displayMetrics.widthPixels
+    val adWidthDp = (adWidthPixels / displayMetrics.density).toInt()
+    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
+    val bannerDpHeight = with(density) { adSize.getHeightInPixels(context).toDp() }
 
     LaunchedEffect(Unit) {
         driveHistoryViewModel.loadHistories()
@@ -60,6 +66,9 @@ fun DriveHistoryScreen(
             DriveLogList(driveHistories)
         }
     }
+    BottomBannerAdWithDummy(
+        modifier = Modifier.align(Alignment.BottomCenter)
+    )
 }
 
 @Composable
@@ -92,6 +101,8 @@ fun DriveLogItem(driveHistory: DriveHistoryUiState) {
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
+                Text(
+                    text = "${log.startTime}〜${log.endTime}",
                 Text(text = "${driveHistory.startTime}〜${driveHistory.endTime}",
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
@@ -100,6 +111,7 @@ fun DriveLogItem(driveHistory: DriveHistoryUiState) {
 
                 )
             }
+            Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
                     text = buildAnnotatedString {

@@ -16,6 +16,7 @@ if (localPropertiesFile.exists()) {
 }
 
 val apiUrl = localProperties.getProperty("API_URL") ?: "https://default-api.com/"
+val ad_id =  localProperties.getProperty("ADMOB_BANNER_ID") ?: "123092"
 
 android {
     namespace = "com.example.drivequest"
@@ -30,6 +31,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_URL", "\"${apiUrl}\"")
+        buildConfigField("String", "ADMOB_BANNER_ID", "\"${ad_id}\"")
     }
 
     buildTypes {
@@ -55,6 +57,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-ads:24.4.0")
     implementation("androidx.compose.foundation:foundation:1.8.3")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(libs.androidx.tracing.perfetto.handshake)
