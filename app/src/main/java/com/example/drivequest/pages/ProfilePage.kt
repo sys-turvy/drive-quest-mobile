@@ -37,8 +37,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import com.example.drivequest.MainScreen
-import com.example.drivequest.pages.auth.FriendListPage
-import com.example.drivequest.pages.auth.LoginPage
 import kotlin.math.roundToInt
 
 @Composable
@@ -748,16 +746,6 @@ fun AchievementDialog(
         }
     }
 }
-
-@Composable
-fun Navigation(navController: NavHostController) {
-    NavHost(navController, startDestination = "main") {
-        composable("main") { MainScreen(navController = navController) }
-        composable("friend") { FriendListPage(navController) }
-        composable("login") { LoginPage(navController) }
-    }
-}
-
 
 sealed class DialogType {
     object Nickname : DialogType()
