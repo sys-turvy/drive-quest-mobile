@@ -2,14 +2,16 @@ package com.example.drivequest.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.drivequest.data.repository.NavigationRepositoryImpl
 import com.example.drivequest.data.repository.PlacesRepositoryImpl
 import com.example.drivequest.domain.model.PlaceAPIResult
 import com.example.drivequest.domain.usecase.GetPlaceDetailsUseCase
 import com.example.drivequest.domain.usecase.SearchPlacesUseCase
-import com.google.android.gms.maps.model.LatLng
+import com.example.drivequest.domain.usecase.SetDestinationUseCase
+import com.example.drivequest.domain.usecase.StartGuidanceUseCase
+import com.example.drivequest.domain.usecase.StopGuidanceUseCase
 import com.google.android.libraries.navigation.Navigator
 import com.google.android.libraries.navigation.TimeAndDistance
-import com.google.android.libraries.navigation.Waypoint
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,16 +34,20 @@ data class GuidanceInfo(
 
 class HomeViewModel : ViewModel() {
 
+    // --- UseCaseのインスタンス化 ---
     private lateinit var searchPlacesUseCase: SearchPlacesUseCase
     private lateinit var getPlaceDetailsUseCase: GetPlaceDetailsUseCase
+    private val setDestinationUseCase = SetDestinationUseCase(NavigationRepositoryImpl)
+    private val startGuidanceUseCase = StartGuidanceUseCase(NavigationRepositoryImpl)
+    private val stopGuidanceUseCase = StopGuidanceUseCase(NavigationRepositoryImpl)
+
     private var navigator: Navigator? = null
 
+    // --- UIの状態 ---
     private val _uiState = MutableStateFlow(UiState.SEARCHING)
     val uiState = _uiState.asStateFlow()
-
     private val _guidanceInfo = MutableStateFlow(GuidanceInfo())
     val guidanceInfo = _guidanceInfo.asStateFlow()
-
     private val _autocompleteResults = MutableStateFlow<List<PlaceAPIResult>>(emptyList())
     val autocompleteResults = _autocompleteResults.asStateFlow()
 
@@ -49,14 +55,15 @@ class HomeViewModel : ViewModel() {
     private var arrivalListener: Navigator.ArrivalListener? = null
     private var remainingTimeOrDistanceChangedListener: Navigator.RemainingTimeOrDistanceChangedListener? = null
 
-    fun initialize(placesClient: PlacesClient) {
+    /**
+     * Viewからの準備完了通知を受け、すべての機能を初期化する
+     */
+    fun onReady(placesClient: PlacesClient, navigator: Navigator) {
         val placesRepository = PlacesRepositoryImpl(placesClient)
         searchPlacesUseCase = SearchPlacesUseCase(placesRepository)
         getPlaceDetailsUseCase = GetPlaceDetailsUseCase(placesRepository)
-    }
-
-    fun setNavigator(navigator: Navigator) {
         this.navigator = navigator
+        NavigationRepositoryImpl.initialize(navigator)
         registerNavigationListeners()
     }
 
@@ -73,44 +80,27 @@ class HomeViewModel : ViewModel() {
         if (!::getPlaceDetailsUseCase.isInitialized) return
         viewModelScope.launch {
             getPlaceDetailsUseCase(place.placeId)?.let { destination ->
-                // 検索結果の名称を目的地として設定
-                setDestination(destination, place.primaryText)
+                // UseCaseに目的地設定を依頼し、結果をコールバックで受け取る
+                setDestinationUseCase(destination, place.primaryText) { routeStatus ->
+                    // ★★★ 型が Navigator.RouteStatus になったことで、より安全な比較が可能 ★★★
+                    if (routeStatus == Navigator.RouteStatus.OK) {
+                        _uiState.value = UiState.GUIDING
+                        _guidanceInfo.value = _guidanceInfo.value.copy(destinationName = place.primaryText)
+                        startGuidanceUseCase()
+                    }
+                }
             }
             _autocompleteResults.value = emptyList()
         }
     }
 
-    private fun setDestination(destination: LatLng, title: String) {
-        val waypoint = Waypoint.builder().setLatLng(destination.latitude, destination.longitude).setTitle(title).build()
-        navigator?.let { nav ->
-            nav.clearDestinations()
-            val pendingRoute = nav.setDestination(waypoint)
-            pendingRoute?.setOnResultListener { code ->
-                if (code == Navigator.RouteStatus.OK) {
-                    _uiState.value = UiState.GUIDING
-                    _guidanceInfo.value = _guidanceInfo.value.copy(destinationName = title)
-                    nav.startGuidance()
-                    nav.setAudioGuidance(Navigator.AudioGuidance.VOICE_ALERTS_AND_GUIDANCE)
-                }
-            }
-        }
-    }
-
-    fun stopGuidance() {
-        navigator?.stopGuidance()
-        navigator?.clearDestinations()
-        _uiState.value = UiState.SEARCHING
-        _guidanceInfo.value = GuidanceInfo()
-    }
-
     fun onGuidanceCompleted() {
-        navigator?.stopGuidance()
+        stopGuidanceUseCase()
         _uiState.value = UiState.SEARCHING
         _guidanceInfo.value = GuidanceInfo()
     }
 
     private fun registerNavigationListeners() {
-        // ★ 到着したらUIの状態をARRIVEDに変更
         arrivalListener = Navigator.ArrivalListener {
             _uiState.value = UiState.ARRIVED
         }
@@ -126,8 +116,6 @@ class HomeViewModel : ViewModel() {
     private fun updateGuidanceInfo(timeAndDistance: TimeAndDistance) {
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         val eta = timeFormat.format(Date(System.currentTimeMillis() + (timeAndDistance.seconds * 1000)))
-
-        //運転時間のフォーマット
         val totalMinutes = TimeUnit.SECONDS.toMinutes(timeAndDistance.seconds.toLong())
         val time = if (totalMinutes >= 60) {
             val hours = totalMinutes / 60
@@ -136,13 +124,20 @@ class HomeViewModel : ViewModel() {
         } else {
             "$totalMinutes 分"
         }
-
         val distance = String.format(Locale.getDefault(), "%.1f km", timeAndDistance.meters / 1000.0)
-
         _guidanceInfo.value = _guidanceInfo.value.copy(
             eta = eta,
             time = time,
             distance = distance
         )
+    }
+
+    override fun onCleared() {
+        navigator?.let { nav ->
+            arrivalListener?.let { nav.removeArrivalListener(it) }
+            remainingTimeOrDistanceChangedListener?.let { nav.removeRemainingTimeOrDistanceChangedListener(it) }
+            nav.cleanup()
+        }
+        super.onCleared()
     }
 }
