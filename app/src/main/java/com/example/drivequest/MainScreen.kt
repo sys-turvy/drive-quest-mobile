@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.drivequest.pages.HomePage
 import com.example.drivequest.pages.DriveHistoryPage
 import com.example.drivequest.pages.RankingPage
@@ -32,7 +33,7 @@ import com.example.drivequest.pages.ProfilePage
 
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier,navController: NavHostController) {
 
 
     val navItemList = listOf(
@@ -74,18 +75,18 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex)
+        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex,navController = navController)
     }
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
+fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int,navController: NavHostController) {
     Column(modifier = modifier.fillMaxSize()) {
         when (selectedIndex) {
             0 -> RankingPage()
             1 -> StorePage()
             2 -> HomePage()
-            3 -> ProfilePage()
+            3 -> ProfilePage(navController = navController)
             4 -> DriveHistoryPage()
         }
     }
