@@ -2,7 +2,7 @@ package com.example.drivequest.token
 
 import com.example.drivequest.data.remote.api.auth.AuthApiService
 import com.example.drivequest.data.remote.api.auth.model.RefreshTokenRequest
-import com.example.drivequest.data.remote.api.auth.model.TokenPair
+import com.example.drivequest.domain.model.TokenPair
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -32,10 +32,9 @@ class TokenAuthenticator @Inject constructor(
 
         if (refreshResponse?.isSuccessful == true) {
             val newToken = refreshResponse.body()?.token ?: return null
-            val newRefreshToken = refreshResponse.body()?.refreshToken ?: return null
 
             runBlocking {
-                tokenManager.saveTokens(TokenPair(newToken, newRefreshToken))
+                tokenManager.saveTokens(TokenPair(newToken, refreshToken))
             }
 
             return response.request.newBuilder()

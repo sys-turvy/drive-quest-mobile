@@ -6,7 +6,7 @@ import com.example.drivequest.data.remote.api.auth.model.LoginResponse
 import retrofit2.HttpException
 import javax.inject.Inject
 
-class AuthRemoteDataSourceImple @Inject constructor(
+class AuthRemoteDataSourceImpl @Inject constructor(
     private val apiService: AuthApiService
 ) : AuthRemoteDataSource {
     override suspend fun login(

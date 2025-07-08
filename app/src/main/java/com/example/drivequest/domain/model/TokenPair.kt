@@ -1,4 +1,4 @@
-package com.example.drivequest.data.remote.api.auth.model
+package com.example.drivequest.domain.model
 
 data class TokenPair(
     val token: String,

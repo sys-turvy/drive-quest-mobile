@@ -1,10 +1,13 @@
-package com.example.drivequest.pages
+package com.example.drivequest.presentation.drivehistory
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,18 +20,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.pages.Components.BottomBannerAdWithDummy // ★ここを追加！
+import com.example.drivequest.presentation.drivehistory.model.DriveHistoryUiState
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.google.android.gms.ads.AdSize
 
 @Composable
-fun DriveHistoryPage(modifier: Modifier = Modifier) {
-    val logs = listOf(
-        DriveLog("6/18", "9:20", "10:20", 60, 70.5),
-        DriveLog("6/17", "8:00", "9:15", 40, 23.5),
-        DriveLog("6/16", "13:20", "14:05", 30, 12.3),
-    )
+fun DriveHistoryScreen(
+    modifier: Modifier = Modifier,
+    driveHistoryViewModel: DriveHistoryViewModel = hiltViewModel()
+) {
+    val driveHistories by driveHistoryViewModel.driveHistories.collectAsState()
+    val errorMessage by driveHistoryViewModel.error.collectAsState()
 
     // バナーの高さを取得
     val context = LocalContext.current
@@ -39,43 +44,44 @@ fun DriveHistoryPage(modifier: Modifier = Modifier) {
     val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
     val bannerDpHeight = with(density) { adSize.getHeightInPixels(context).toDp() }
 
-    Box(
-        modifier = modifier.fillMaxSize()
+    LaunchedEffect(Unit) {
+        driveHistoryViewModel.loadHistories()
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = bannerDpHeight), // バナー分のスペースを空ける
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "運転履歴",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(16.dp),
-                color = Color.White
-            )
-            DriveLogList(logs)
-        }
-
-        // ここで共通コンポーネントを呼び出し
-        BottomBannerAdWithDummy(
-            modifier = Modifier.align(Alignment.BottomCenter)
+        Text(
+            text = "運転履歴",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(16.dp),
+            color = Color.White
         )
+        if(errorMessage != null) {
+            Text("エラー: $errorMessage", color = Color.Red)
+        } else {
+            DriveLogList(driveHistories)
+        }
     }
+    BottomBannerAdWithDummy(
+        modifier = Modifier.align(Alignment.BottomCenter)
+    )
 }
 
 @Composable
-fun DriveLogList(logs: List<DriveLog>) {
+fun DriveLogList(driveHistories: List<DriveHistoryUiState>) {
     LazyColumn {
-        items(logs) { log ->
-            DriveLogItem(log)
+        items(driveHistories) { driveHistory ->
+            DriveLogItem(driveHistory)
         }
     }
 }
 
 @Composable
-fun DriveLogItem(log: DriveLog) {
+fun DriveLogItem(driveHistory: DriveHistoryUiState) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
@@ -89,18 +95,20 @@ fun DriveLogItem(log: DriveLog) {
             Column {
                 Row {
                     Text(
-                        text = log.date,
+                        text = driveHistory.date,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
+                        fontSize = 20.sp,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
                 Text(
                     text = "${log.startTime}〜${log.endTime}",
+                Text(text = "${driveHistory.startTime}〜${driveHistory.endTime}",
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .width(120.dp),
                     color = Color(0xFF4A90E2),
+
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
@@ -109,7 +117,7 @@ fun DriveLogItem(log: DriveLog) {
                     text = buildAnnotatedString {
                         append("走行距離: ")
                         withStyle(style = SpanStyle(color = Color(0xFFDC143C))) {
-                            append("${log.distance} km")
+                            append("${driveHistory.distance} km")
                         }
                     }
                 )
@@ -117,7 +125,7 @@ fun DriveLogItem(log: DriveLog) {
                     text = buildAnnotatedString {
                         append("運転時間: ")
                         withStyle(style = SpanStyle(color = Color(0xFFFF7F50))) {
-                            append("${log.durationTime} 分")
+                            append("${driveHistory.durationTime} 分")
                         }
                     }
                 )
@@ -126,20 +134,12 @@ fun DriveLogItem(log: DriveLog) {
     }
 }
 
-data class DriveLog(
-    val date: String,
-    val startTime: String,
-    val endTime: String,
-    val durationTime: Int,
-    val distance: Double
-)
-
 @Preview
 @Composable
 fun DriveHistoryPagePreview() {
     DriveQuestTheme {
         GradientBackground {
-            DriveHistoryPage()
+            DriveHistoryScreen()
         }
     }
 }
