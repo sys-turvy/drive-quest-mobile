@@ -19,7 +19,7 @@ fun MainPage() {
     MainLayout(navController = childNavController, currentRoute = currentRoute) {
         NavHost(navController = childNavController, startDestination = "home") {
             composable("home") { HomePage() }
-            composable("profile") { ProfilePage() }
+            composable("profile") { ProfilePage(navController = childNavController) }
             composable("ranking") { RankingPage() }
             composable("store") { StorePage() }
             composable("history") { DriveHistoryScreen() }
