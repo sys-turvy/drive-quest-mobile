@@ -34,11 +34,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.drivequest.ArrivalCard
+import com.example.drivequest.pages.components.ArrivalCard
 import com.example.drivequest.domain.model.PlaceAPIResult
-import com.example.drivequest.GuidanceCard
-import com.example.drivequest.pages.components.LoadingScreen
-import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.example.drivequest.pages.components.GuidanceCard
+import com.example.drivequest.pages.components.Loading
 import com.example.drivequest.view_model.UiState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.navigation.NavigationApi
@@ -71,16 +70,13 @@ fun HomePage(
 
     DisposableEffect(Unit) {
         val listener = object : NavigationApi.NavigatorListener {
-            @SuppressLint("MissingPermission")
             override fun onNavigatorReady(navigator: Navigator) {
-                homeViewModel.initialize(placesClient)
-                homeViewModel.setNavigator(navigator)
+                homeViewModel.onReady(placesClient, navigator)
                 navigationView.getMapAsync { googleMap ->
                     googleMap.isMyLocationEnabled = true
                     googleMap.followMyLocation(GoogleMap.CameraPerspective.TILTED)
-
-                    navigationView.setReportIncidentButtonEnabled(false)
                     navigationView.setRecenterButtonEnabled(false)
+                    navigationView.setReportIncidentButtonEnabled(false)
                 }
                 isNavigatorReady = true
             }
@@ -99,7 +95,7 @@ fun HomePage(
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (!isNavigatorReady) {
-            LoadingScreen()
+            Loading()
         } else {
             AndroidView(
                 factory = { navigationView },
@@ -146,7 +142,7 @@ fun HomePage(
                         }
                         GuidanceCard(
                             guidanceInfo = guidanceInfo,
-                            onFinishClick = { homeViewModel.stopGuidance() }
+                            onFinishClick = { homeViewModel.onGuidanceCompleted() }
                         )
                     }
                 }
@@ -154,7 +150,7 @@ fun HomePage(
                 UiState.ARRIVED -> {
                     ArrivalCard(
                         guidanceInfo = guidanceInfo,
-                        onCompleteClick = { homeViewModel.onTripCompleted() },
+                        onCompleteClick = { homeViewModel.onGuidanceCompleted()},
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
