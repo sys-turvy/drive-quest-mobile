@@ -32,10 +32,9 @@ class TokenAuthenticator @Inject constructor(
 
         if (refreshResponse?.isSuccessful == true) {
             val newToken = refreshResponse.body()?.token ?: return null
-            val newRefreshToken = refreshResponse.body()?.refreshToken ?: return null
 
             runBlocking {
-                tokenManager.saveTokens(TokenPair(newToken, newRefreshToken))
+                tokenManager.saveTokens(TokenPair(newToken, refreshToken))
             }
 
             return response.request.newBuilder()

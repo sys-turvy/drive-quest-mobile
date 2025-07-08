@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.drivequest.BuildConfig
 import com.example.drivequest.data.remote.api.auth.AuthApiService
 import com.example.drivequest.data.remote.datasource.auth.AuthRemoteDataSource
-import com.example.drivequest.data.remote.datasource.auth.AuthRemoteDataSourceImple
+import com.example.drivequest.data.remote.datasource.auth.AuthRemoteDataSourceImpl
 import com.example.drivequest.data.repository.AuthRepositoryImpl
 import com.example.drivequest.domain.repository.AuthRepository
 import com.example.drivequest.domain.usecase.LoginUseCase
@@ -82,7 +82,7 @@ object AppModule {
     fun provideAuthRemoteDataSource(
         apiService: AuthApiService
     ): AuthRemoteDataSource {
-        return AuthRemoteDataSourceImple(apiService)
+        return AuthRemoteDataSourceImpl(apiService)
     }
 
     // TokenManager提供
