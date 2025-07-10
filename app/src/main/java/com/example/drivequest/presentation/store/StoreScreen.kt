@@ -1,4 +1,4 @@
-package com.example.drivequest.pages
+package com.example.drivequest.presentation.store
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -8,73 +8,68 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
-import com.example.drivequest.mock.Product
-import com.example.drivequest.mock.sampleProducts
-import com.example.drivequest.mock.sampleFrames
 import com.example.drivequest.pages.Components.ProductFrameGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.drivequest.pages.Components.GradientBackground
 import com.example.drivequest.pages.Components.BottomBannerAdWithDummy
+import com.example.drivequest.presentation.store.model.Product
+import com.example.drivequest.presentation.store.model.StoreTab
 import com.example.drivequest.ui.theme.DriveQuestTheme
-import com.google.android.gms.ads.AdSize
 
-enum class StoreTab { Icon, Frame }
-
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun StorePage(modifier: Modifier = Modifier) {
-    var selectedTab by remember { mutableStateOf(StoreTab.Frame) }
-    var products by remember { mutableStateOf(sampleProducts.toMutableList()) }
-    var frames by remember { mutableStateOf(sampleFrames.toMutableList()) }
-    var detailTarget by remember { mutableStateOf<Product?>(null) }
-    var purchaseConfirmTarget by remember { mutableStateOf<Product?>(null) }
-    var showAdRemoveDialog by remember { mutableStateOf(false) }
+fun StoreScreen(
+    storeViewModel: StoreViewModel = hiltViewModel()
+) {
+    val selectedTab by storeViewModel.selectedTab
+    val iconFrames by storeViewModel.iconFrames.collectAsState()
+    val voiceStyle by storeViewModel.voiceStyle.collectAsState()
+    val voiceStyleError by storeViewModel.voiceStyleError.collectAsState() //ボイスのデータ取得時エラー処理ように値をとっている
+    val iconFrameError by storeViewModel.iconFrameError.collectAsState()  //アイコンフレームのデータ取得時エラー処理ように値をとっている
+    val detailTarget by storeViewModel.detailTarget.collectAsState()
+    val purchaseConfirmTarget by storeViewModel.purchaseConfirmTarget.collectAsState()
+    val showAdRemoveDialog by storeViewModel.showAdRemoveDialog.collectAsState()
+
+    LaunchedEffect(Unit) {
+        storeViewModel.loadIconFrames()
+        storeViewModel.loadVoiceStyle()
+    }
 
     if (detailTarget != null) {
         ProductDetailDialog(
             product = detailTarget!!,
-            onClose = { detailTarget = null },
+            onClose = { storeViewModel.selectDetailTarget(null) },
             onPurchaseClick = { product ->
-                detailTarget = null
-                purchaseConfirmTarget = product
+                storeViewModel.selectDetailTarget(null)
+                storeViewModel.selectPurchaseConfirmTarget(product)
             }
         )
     }
 
     if (purchaseConfirmTarget != null) {
         AlertDialog(
-            onDismissRequest = { purchaseConfirmTarget = null },
+            onDismissRequest = { storeViewModel.selectPurchaseConfirmTarget(null) },
             title = { Text("確認") },
             text = { Text("「${purchaseConfirmTarget!!.name}」を${purchaseConfirmTarget!!.price}円で本当に購入しますか？") },
             confirmButton = {
                 TextButton(onClick = {
-                    if (selectedTab == StoreTab.Frame) {
-                        products = products.map {
-                            if (it.name == purchaseConfirmTarget!!.name) it.copy(purchase = 1) else it
-                        }.toMutableList()
-                    } else {
-                        frames = frames.map {
-                            if (it.name == purchaseConfirmTarget!!.name) it.copy(purchase = 1) else it
-                        }.toMutableList()
-                    }
-                    purchaseConfirmTarget = null
+                    storeViewModel.selectPurchaseConfirmTarget(null)
                 }) { Text("購入") }
             },
             dismissButton = {
-                TextButton(onClick = { purchaseConfirmTarget = null }) {
+                TextButton(onClick = { storeViewModel.selectPurchaseConfirmTarget(null) }) {
                     Text("キャンセル")
                 }
             }
@@ -82,134 +77,123 @@ fun StorePage(modifier: Modifier = Modifier) {
     }
 
     if (showAdRemoveDialog) {
-        AdRemoveDialog(onClose = { showAdRemoveDialog = false })
+        AdRemoveDialog(onClose = { storeViewModel.chengeShowAdRemoveDialog(false) })
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
-                )
-            )
-    ) {
-        // 右上「広告非表示」ボタン
-        Button(
-            onClick = { showAdRemoveDialog = true },
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White.copy(alpha = 0.95f),
-                contentColor = Color(0xFF4A90E2)
-            ),
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 12.dp)
-                .zIndex(2f)
-        ) {
-            Text(
-                "広告非表示",
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                lineHeight = 16.sp
-            )
-        }
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                title = {
+                    Text(
+                        text = "ストア",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                actions = {
+                    Button(
+                        onClick = {storeViewModel.chengeShowAdRemoveDialog(true)},
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White.copy(alpha = 0.95f),
+                            contentColor = Color(0xFF4A90E2)
+                        ),
+                        modifier = Modifier
+                    ) {
+                        Text(
+                            "広告非表示",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp
+                        )
+                    }
 
-        // メインUI
-        Column(
+                }
+            )
+        },
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = with(LocalDensity.current) {
-                    // BottomBannerAdWithDummy用バナー高さ
-                    val context = LocalContext.current
-                    val displayMetrics = context.resources.displayMetrics
-                    val adWidthPixels = displayMetrics.widthPixels
-                    val adWidthDp = (adWidthPixels / displayMetrics.density).toInt()
-                    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-                        context, adWidthDp
-                    )
-                    adSize.getHeightInPixels(context).toDp()
-                }),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = innerPadding.calculateTopPadding()),
+            contentAlignment = Alignment.Center
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                "ストア",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // タブバー
-            Row(
+            Column(
                 modifier = Modifier
-                    .widthIn(max = 360.dp)
-                    .background(Color.White.copy(alpha = 0.15f), shape = MaterialTheme.shapes.medium)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(
-                    onClick = { selectedTab = StoreTab.Icon },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =
-                            if (selectedTab == StoreTab.Icon) Color.White else Color(0x332A95E2),
-                        contentColor =
-                            if (selectedTab == StoreTab.Icon) Color(0xFF4A90E2) else Color.White
-                    ),
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.weight(1f)
+                // タブバー
+                Row(
+                    modifier = Modifier
+                        .widthIn(max = 360.dp)
+                        .background(Color.White.copy(alpha = 0.15f), shape = MaterialTheme.shapes.medium)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("アイコンフレーム")
+                    Button(
+                        onClick = { storeViewModel.selectIconFrameTab() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (selectedTab == StoreTab.IconFrame) Color.White else Color(0x332A95E2),
+                            contentColor =
+                                if (selectedTab == StoreTab.IconFrame) Color(0xFF4A90E2) else Color.White
+                        ),
+                        shape = MaterialTheme.shapes.small,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("アイコンフレーム")
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Button(
+                        onClick = { storeViewModel.selectVoiceStyleTab() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor =
+                                if (selectedTab == StoreTab.VoiceStyle) Color.White else Color(0x332A95E2),
+                            contentColor =
+                                if (selectedTab == StoreTab.VoiceStyle) Color(0xFF4A90E2) else Color.White
+                        ),
+                        shape = MaterialTheme.shapes.small,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("ナビ音声")
+                    }
                 }
-                Spacer(modifier = Modifier.width(12.dp))
-                Button(
-                    onClick = { selectedTab = StoreTab.Frame },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =
-                            if (selectedTab == StoreTab.Frame) Color.White else Color(0x332A95E2),
-                        contentColor =
-                            if (selectedTab == StoreTab.Frame) Color(0xFF4A90E2) else Color.White
-                    ),
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("ナビ音声")
-                }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            when (selectedTab) {
-                StoreTab.Icon -> {
-                    ProductFrameGrid(
-                        products = frames,
-                        onProductClick = { product ->
-                            detailTarget = product
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
+                when (selectedTab) {
+                    StoreTab.IconFrame -> {
+                        ProductFrameGrid(
+                            products = iconFrames,
+                            onProductClick = { product ->
+                                storeViewModel.selectDetailTarget(product)
+                            },
+                            modifier = Modifier.fillMaxSize().weight(1f)
+                        )
+                    }
+                    StoreTab.VoiceStyle -> {
+                        ProductFrameGrid(
+                            products = voiceStyle,
+                            onProductClick = { product ->
+                                storeViewModel.selectDetailTarget(product)
+                            },
+                            modifier = Modifier.fillMaxSize().weight(1f)
+                        )
+                    }
                 }
-                StoreTab.Frame -> {
-                    ProductFrameGrid(
-                        products = products,
-                        onProductClick = { product ->
-                            detailTarget = product
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                BottomBannerAdWithDummy(
+                    modifier = Modifier.fillMaxWidth().zIndex(3f)
+                )
             }
         }
-
-        // 下部バナー＋高さダミー
-        BottomBannerAdWithDummy(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .zIndex(3f)
-        )
     }
 }
 
@@ -240,7 +224,7 @@ fun ProductDetailDialog(
                         .padding(top = 24.dp)
                 ) {
                     AsyncImage(
-                        model = product.imageUrl.ifBlank {
+                        model = product.imgUrl.ifBlank {
                             "https://play-lh.googleusercontent.com/2HAZLGMx7WmmnCT5b7CAKazuEhHtTfnnCPDrAI9FY3gYsGXfvpxby0j0qj3PSixc4w"
                         },
                         contentDescription = product.name,
@@ -263,7 +247,7 @@ fun ProductDetailDialog(
                         color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(18.dp))
-                    if (product.purchase == 1) {
+                    if (product.isOwned) {
                         Text(
                             "購入済み",
                             color = Color(0xFF4A4A4A),
@@ -347,7 +331,7 @@ fun AdRemoveDialog(onClose: () -> Unit) {
 fun StorePagePreview() {
     DriveQuestTheme {
         GradientBackground {
-            StorePage(modifier = Modifier)
+            StoreScreen()
         }
     }
 }
