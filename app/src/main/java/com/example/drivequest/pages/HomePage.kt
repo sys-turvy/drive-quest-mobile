@@ -4,7 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,10 +39,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.drivequest.pages.components.ArrivalCard
+import com.example.drivequest.pages.Components.ArrivalCard
 import com.example.drivequest.domain.model.PlaceAPIResult
-import com.example.drivequest.pages.components.GuidanceCard
-import com.example.drivequest.pages.components.Loading
+import com.example.drivequest.pages.Components.AchievementsCard
+import com.example.drivequest.pages.Components.GuidanceCard
+import com.example.drivequest.pages.Components.Loading
 import com.example.drivequest.view_model.UiState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.navigation.NavigationApi
@@ -57,6 +63,7 @@ fun HomePage(
     val uiState by homeViewModel.uiState.collectAsState()
     val guidanceInfo by homeViewModel.guidanceInfo.collectAsState()
     val autocompleteResults by homeViewModel.autocompleteResults.collectAsState()
+    val showAchievementsCard by homeViewModel.showAchievementsCard.collectAsState()
 
     var isSearchActive by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
@@ -93,7 +100,6 @@ fun HomePage(
             .distinctUntilChanged()
             .collect { query -> homeViewModel.onSearchQueryChanged(query) }
     }
-
     Box(modifier = Modifier.fillMaxSize()) {
         if (!isNavigatorReady) {
             Loading()
@@ -130,6 +136,7 @@ fun HomePage(
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.End
                     ){
+
                         FloatingActionButton(
                             onClick = {
                                 navigationView.getMapAsync { googleMap ->
@@ -149,18 +156,32 @@ fun HomePage(
                 }
                 //到着時
                 UiState.ARRIVED -> {
-                    ArrivalCard(
-                        guidanceInfo = guidanceInfo,
-                        onCompleteClick = { homeViewModel.onGuidanceCompleted()},
-                        modifier = Modifier.align(Alignment.BottomCenter)
-                    )
+                    Column(
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // 称号カード（条件に応じて表示）
+                        AnimatedVisibility(
+                            visible = showAchievementsCard,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            AchievementsCard(achievementsText = "走行距離100kmの称号を取得しました！")
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ArrivalCard(
+                            guidanceInfo = guidanceInfo,
+                            onCompleteClick = { homeViewModel.onGuidanceCompleted() },
+                        )
+                        //TODO:到着後の処理
+                    }
                 }
             }
         }
     }
 
 
-    // NavigationViewのライフサイクル管理は必須
+    // NavigationViewのライフサイクル管理
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             val bundle = Bundle()
@@ -220,63 +241,91 @@ fun SearchUi(
             } else {
                 Modifier.padding(vertical = 12.dp)
             }
-            Column(modifier = columnModifier) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    if (isSearchActive) {
-                        TextField(
-                            value = searchText,
-                            onValueChange = onSearchTextChange,
-                            modifier = Modifier.weight(1f).focusRequester(focusRequester),
-                            placeholder = { Text("ここで検索") },
-                            trailingIcon = {
-                                IconButton(onClick = {
-                                    if (searchText.isNotEmpty()) onSearchTextChange("") else onSearchActiveChange(false)
-                                }) { Icon(Icons.Default.Close, "クリア/閉じる") }
-                            },
-                            shape = RoundedCornerShape(16.dp),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color(0xFFF0F0F0),
-                                unfocusedContainerColor = Color(0xFFF0F0F0),
-                                focusedIndicatorColor = Color.Transparent
-                            ),
-                            singleLine = true
-                        )
-                    } else {
-                        Row(
-                            modifier = Modifier.weight(1f).clip(RoundedCornerShape(16.dp)).background(Color(0xFFF0F0F0)).clickable { onSearchActiveChange(true) }.padding(14.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(Icons.Filled.Search, "検索", tint = Color.Gray)
-                            Text("ここで検索", color = Color.Gray)
-                        }
-                        Button(
-                            onClick = { /* TODO: 練習ルート作成のロジックを実装 */ },
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4A90E2))
-                        ) { Text("練習ルート\n作成", textAlign = TextAlign.Center) }
-                    }
+            Column(
+                modifier = Modifier.animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                )
+            ) {
+                val columnModifier = if (isSearchActive) {
+                    Modifier.height(LocalConfiguration.current.screenHeightDp.dp * 0.7f)
+                } else {
+                    Modifier.padding(vertical = 12.dp)
                 }
-                AnimatedVisibility(
-                    visible = isSearchActive,
-                    enter = expandVertically(expandFrom = Alignment.Bottom),
-                    exit = shrinkVertically(shrinkTowards = Alignment.Bottom)
-                ) {
-                    LazyColumn(modifier = Modifier.fillMaxWidth().height(300.dp).padding(top = 8.dp)) {
-                        items(autocompleteResults) { result ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth().clickable {
-                                    onPlaceSelected(result)
-                                }.padding(horizontal = 16.dp, vertical = 12.dp)
+                Column(modifier = columnModifier) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (isSearchActive) {
+                            TextField(
+                                value = searchText,
+                                onValueChange = onSearchTextChange,
+                                modifier = Modifier.weight(1f).focusRequester(focusRequester),
+                                placeholder = { Text("ここで検索") },
+                                trailingIcon = {
+                                    IconButton(onClick = {
+                                        if (searchText.isNotEmpty()) onSearchTextChange("") else onSearchActiveChange(
+                                            false
+                                        )
+                                    }) { Icon(Icons.Default.Close, "クリア/閉じる") }
+                                },
+                                shape = RoundedCornerShape(16.dp),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color(0xFFF0F0F0),
+                                    unfocusedContainerColor = Color(0xFFF0F0F0),
+                                    focusedIndicatorColor = Color.Transparent
+                                ),
+                                singleLine = true
+                            )
+                        } else {
+                            Row(
+                                modifier = Modifier.weight(1f).clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFF0F0F0))
+                                    .clickable { onSearchActiveChange(true) }.padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Text(result.primaryText, fontWeight = FontWeight.Bold)
-                                Text(result.secondaryText, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                                Icon(Icons.Filled.Search, "検索", tint = Color.Gray)
+                                Text("ここで検索", color = Color.Gray)
+                            }
+                            Button(
+                                onClick = { /* TODO: 練習ルート作成のロジックを実装 */ },
+                                shape = RoundedCornerShape(16.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF4A90E2
+                                    )
+                                )
+                            ) { Text("練習ルート\n作成", textAlign = TextAlign.Center) }
+                        }
+                    }
+                    AnimatedVisibility(
+                        visible = isSearchActive,
+                        enter = expandVertically(expandFrom = Alignment.Bottom),
+                        exit = shrinkVertically(shrinkTowards = Alignment.Bottom)
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth().height(300.dp).padding(top = 8.dp)
+                        ) {
+                            items(autocompleteResults) { result ->
+                                Column(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        onPlaceSelected(result)
+                                    }.padding(horizontal = 16.dp, vertical = 12.dp)
+                                ) {
+                                    Text(result.primaryText, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        result.secondaryText,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                    )
+                                }
                             }
                         }
                     }
