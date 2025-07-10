@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.drivequest.pages.HomePage
 import com.example.drivequest.pages.ProfilePage
 import com.example.drivequest.pages.RankingPage
-import com.example.drivequest.pages.StorePage
+import com.example.drivequest.presentation.store.StoreScreen
 import com.example.drivequest.presentation.drivehistory.DriveHistoryScreen
 
 @Composable
@@ -21,7 +21,7 @@ fun MainPage() {
             composable("home") { HomePage() }
             composable("profile") { ProfilePage(navController = childNavController) }
             composable("ranking") { RankingPage() }
-            composable("store") { StorePage() }
+            composable("store") { StoreScreen() }
             composable("history") { DriveHistoryScreen() }
         }
     }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.drivequest.mock.Product
+import com.example.drivequest.presentation.store.model.Product
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -27,10 +27,10 @@ fun ProductFrameGrid(
     ) {
         items(products) { product ->
             FrameCard(
-                imageUrl = product.imageUrl,
+                imageUrl = product.imgUrl,
                 frameName = product.name,
                 price = product.price,
-                purchase = product.purchase,   // ← カンマを忘れずに
+                purchase = product.isOwned,   // ← カンマを忘れずに
                 modifier = Modifier, // ※width指定は不要
                 onClick = { onProductClick(product) }  // ← = を一つだけ、カンマもOK！
             )
