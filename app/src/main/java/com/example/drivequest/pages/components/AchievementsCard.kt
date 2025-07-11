@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.components
+package com.example.drivequest.pages.Components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

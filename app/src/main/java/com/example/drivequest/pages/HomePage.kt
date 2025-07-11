@@ -148,7 +148,6 @@ fun HomePage(
                 }
 
                 UiState.GUIDING -> {
-
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Bottom
