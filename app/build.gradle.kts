@@ -73,10 +73,13 @@ secrets {
 
 dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
     implementation("com.google.android.gms:play-services-ads:24.4.0")
     implementation("androidx.compose.foundation:foundation:1.8.3")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(libs.androidx.tracing.perfetto.handshake)
+    implementation(libs.androidx.runtime.livedata)
     debugImplementation("androidx.navigation:navigation-testing:2.7.7")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
