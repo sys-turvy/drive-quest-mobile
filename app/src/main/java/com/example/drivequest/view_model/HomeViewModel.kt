@@ -55,6 +55,10 @@ class HomeViewModel : ViewModel() {
     private var arrivalListener: Navigator.ArrivalListener? = null
     private var remainingTimeOrDistanceChangedListener: Navigator.RemainingTimeOrDistanceChangedListener? = null
 
+    // ★★★ 称号カードの表示状態を管理 ★★★
+    private val _showAchievementsCard = MutableStateFlow(false)
+    val showAchievementsCard = _showAchievementsCard.asStateFlow()
+
     /**
      * Viewからの準備完了通知を受け、すべての機能を初期化する
      */
@@ -98,11 +102,13 @@ class HomeViewModel : ViewModel() {
         stopGuidanceUseCase()
         _uiState.value = UiState.SEARCHING
         _guidanceInfo.value = GuidanceInfo()
+        _showAchievementsCard.value = false
     }
 
     private fun registerNavigationListeners() {
         arrivalListener = Navigator.ArrivalListener {
             _uiState.value = UiState.ARRIVED
+            _showAchievementsCard.value = true
         }
         navigator?.addArrivalListener(arrivalListener!!)
 

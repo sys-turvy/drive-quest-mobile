@@ -66,7 +66,8 @@ fun MainLayout(
         containerColor = Color.Transparent
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             content()
         }

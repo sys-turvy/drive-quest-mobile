@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
-import com.example.drivequest.pages.Components.ActionButton
-import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.components.ActionButton
+import com.example.drivequest.pages.components.GradientBackground
 import com.example.drivequest.pages.auth.components.FormCard
 import com.example.drivequest.ui.theme.DriveQuestTheme
 

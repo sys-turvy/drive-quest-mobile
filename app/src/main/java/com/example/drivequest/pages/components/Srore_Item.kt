@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.Components
+package com.example.drivequest.pages.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,13 +23,13 @@ fun FrameCard(
     imageUrl: String = "",
     frameName: String = "??フレーム",
     price: Int = 200,
-    purchase: Int = 0,
+    purchase: Boolean = false,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {} // 追加
 ) {
     val corner = 16.dp
     val defaultImageUrl = "https://play-lh.googleusercontent.com/2HAZLGMx7WmmnCT5b7CAKazuEhHtTfnnCPDrAI9FY3gYsGXfvpxby0j0qj3PSixc4w"
-    val cardBgColor = if (purchase == 1) Color.Gray else Color.White
+    val cardBgColor = if (purchase) Color.Gray else Color.White
 
     Box(
         modifier = modifier
@@ -37,7 +37,7 @@ fun FrameCard(
             .clip(RoundedCornerShape(corner))
             .background(cardBgColor)
             .padding(16.dp)
-            .clickable(enabled = purchase == 0) { onClick() }, // 購入済みはタップ無効
+            .clickable(enabled = !purchase) { onClick() }, // 購入済みはタップ無効
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -57,7 +57,7 @@ fun FrameCard(
                 text = frameName,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                color = if (purchase == 1) Color.White else Color.Black,
+                color = if (purchase) Color.White else Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,                      // 最大1行
@@ -68,14 +68,14 @@ fun FrameCard(
                 text = "${price}円",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = if (purchase == 1) Color.White else Color(0xFF000000),
+                color = if (purchase) Color.White else Color(0xFF000000),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = 1,                      // 最大1行
                 overflow = TextOverflow.Ellipsis   // 溢れたら省略記号
             )
         }
-        if (purchase == 1) {
+        if (purchase) {
             Text(
                 text = "購入済み",
                 color = Color.White,
