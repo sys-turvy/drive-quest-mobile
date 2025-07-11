@@ -17,7 +17,8 @@ if (localPropertiesFile.exists()) {
 }
 
 val apiUrl = localProperties.getProperty("API_URL") ?: "https://default-api.com/"
-val ad_id =  localProperties.getProperty("ADMOB_BANNER_ID") ?: "123092"
+val ad_id =  localProperties.getProperty("ADMOB_BANNER_ID") ?: "000000"
+val openWeatherKey = localProperties.getProperty("OPENWEATHER_API_KEY") ?: "000000"
 
 android {
     namespace = "com.example.drivequest"
@@ -33,7 +34,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_URL", "\"${apiUrl}\"")
         buildConfigField("String", "ADMOB_BANNER_ID", "\"${ad_id}\"")
+        buildConfigField("String", "OPENWEATHER_API_KEY", "\"${openWeatherKey}\"")
     }
+
+
 
     buildTypes {
         release {
@@ -68,6 +72,7 @@ secrets {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.android.gms:play-services-ads:24.4.0")
     implementation("androidx.compose.foundation:foundation:1.8.3")
     implementation("io.coil-kt:coil-compose:2.7.0")
@@ -82,6 +87,10 @@ dependencies {
     implementation("com.squareup.moshi:moshi:1.15.2")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
@@ -98,6 +107,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+
 
     // Google
     val navSdkVersion = "6.3.0"

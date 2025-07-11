@@ -39,11 +39,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.drivequest.pages.components.ArrivalCard
+import coil.compose.rememberAsyncImagePainter
+import com.example.drivequest.BuildConfig
+import com.example.drivequest.data.remote.api.weather.WeatherManager
+import com.example.drivequest.data.remote.api.weather.WeatherResponse
 import com.example.drivequest.domain.model.PlaceAPIResult
-import com.example.drivequest.pages.components.AchievementsCard
-import com.example.drivequest.pages.components.GuidanceCard
-import com.example.drivequest.pages.components.Loading
+import com.example.drivequest.pages.Components.ArrivalCard
+import com.example.drivequest.pages.Components.GuidanceCard
+import com.example.drivequest.pages.Components.Loading
 import com.example.drivequest.view_model.UiState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.navigation.NavigationApi
@@ -53,28 +56,38 @@ import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import com.example.drivequest.view_model.HomeViewModel
-
+import androidx.compose.foundation.layout.navigationBarsPadding   // 追加済み
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @SuppressLint("MissingPermission")
 @Composable
 fun HomePage(
     homeViewModel: HomeViewModel = viewModel(),
 ) {
-    val uiState by homeViewModel.uiState.collectAsState()
-    val guidanceInfo by homeViewModel.guidanceInfo.collectAsState()
+    val uiState             by homeViewModel.uiState.collectAsState()
+    val guidanceInfo        by homeViewModel.guidanceInfo.collectAsState()
     val autocompleteResults by homeViewModel.autocompleteResults.collectAsState()
     val showAchievementsCard by homeViewModel.showAchievementsCard.collectAsState()
 
-    var isSearchActive by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
+    var isSearchActive  by remember { mutableStateOf(false) }
+    var searchText      by remember { mutableStateOf("") }
+    val focusRequester  = remember { FocusRequester() }
     var isNavigatorReady by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
+    val context        = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val placesClient = remember { Places.createClient(context) }
-    val navigationView = remember { NavigationView(context).apply { keepScreenOn = true }
+    val placesClient   = remember { Places.createClient(context) }
+    val navigationView = remember { NavigationView(context).apply { keepScreenOn = true } }
+
+    /*  天気監視  */
+    val weatherManager = remember {
+        WeatherManager(context, BuildConfig.OPENWEATHER_API_KEY).also { it.start() }
     }
+    val weather by weatherManager.weather.collectAsState()
+    DisposableEffect(weatherManager) { onDispose { weatherManager.stop() } }
+    /*  */
 
     DisposableEffect(Unit) {
         val listener = object : NavigationApi.NavigatorListener {
@@ -100,17 +113,20 @@ fun HomePage(
             .distinctUntilChanged()
             .collect { query -> homeViewModel.onSearchQueryChanged(query) }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize()) {
+        /*********** ナビエンジン準備チェック ***********/
+
         if (!isNavigatorReady) {
             Loading()
         } else {
+            /*********** 地図描画（NavigationView） ***********/
             AndroidView(
                 factory = { navigationView },
                 modifier = Modifier.fillMaxSize()
             )
 
+            /*********** UI 切り替え ***********/
             when (uiState) {
-                //検索時
                 UiState.SEARCHING -> {
                     SearchUi(
                         isSearchActive = isSearchActive,
@@ -125,36 +141,57 @@ fun HomePage(
                             searchText = ""
                         },
                         onRecenterClick = {
-                            navigationView.getMapAsync { it.followMyLocation(GoogleMap.CameraPerspective.TILTED) }
-                        }
+                            navigationView.getMapAsync {
+                                it.followMyLocation(GoogleMap.CameraPerspective.TILTED)
+                            }
+                        },
+                        weather = weather // ★★ 既存コードを保持 ★★
                     )
                 }
-                //ナビゲーション時
+
                 UiState.GUIDING -> {
+
                     Column(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.End
-                    ){
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
 
-                        FloatingActionButton(
-                            onClick = {
-                                navigationView.getMapAsync { googleMap ->
-                                    googleMap.followMyLocation(GoogleMap.CameraPerspective.TILTED)
-                                }
-                            },
-                            modifier = Modifier.padding(bottom = 8.dp, end = 16.dp),
-                            containerColor = Color.White
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+
                         ) {
-                            Icon(Icons.Filled.MyLocation, contentDescription = "Recenter")
+// 左側：天気カード
+                            weather?.let {
+                                WeatherInfoCard(
+                                    weather = it,
+                                    modifier = Modifier // 必要ならサイズ・装飾を追加
+                                )
+                            }
+
+// 右側：現在地（GPS）ボタン
+                            FloatingActionButton(
+                                onClick = { /* TODO: 現在地にリセンター */ },
+                                containerColor = Color.White
+                            ) {
+                                Icon(
+                                    Icons.Filled.MyLocation,
+                                    contentDescription = "Recenter"
+                                )
+                            }
                         }
+
                         GuidanceCard(
                             guidanceInfo = guidanceInfo,
                             onFinishClick = { homeViewModel.onGuidanceCompleted() }
                         )
                     }
                 }
-                //到着時
+
+                /****************** 到着後画面 ******************/
                 UiState.ARRIVED -> {
                     Column(
                         modifier = Modifier.align(Alignment.BottomCenter),
@@ -179,18 +216,17 @@ fun HomePage(
             }
         }
     }
-
-
+    
     // NavigationViewのライフサイクル管理
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             val bundle = Bundle()
             when (event) {
-                Lifecycle.Event.ON_CREATE -> navigationView.onCreate(bundle)
-                Lifecycle.Event.ON_START -> navigationView.onStart()
-                Lifecycle.Event.ON_RESUME -> navigationView.onResume()
-                Lifecycle.Event.ON_PAUSE -> navigationView.onPause()
-                Lifecycle.Event.ON_STOP -> navigationView.onStop()
+                Lifecycle.Event.ON_CREATE  -> navigationView.onCreate(bundle)
+                Lifecycle.Event.ON_START   -> navigationView.onStart()
+                Lifecycle.Event.ON_RESUME  -> navigationView.onResume()
+                Lifecycle.Event.ON_PAUSE   -> navigationView.onPause()
+                Lifecycle.Event.ON_STOP    -> navigationView.onStop()
                 Lifecycle.Event.ON_DESTROY -> navigationView.onDestroy()
                 else -> {}
             }
@@ -200,9 +236,9 @@ fun HomePage(
     }
 }
 
-/**
- * 検索関連のUIをまとめたコンポーザブル
- */
+/* =====================================================
+   検索関連 UI
+   ===================================================== */
 @Composable
 fun SearchUi(
     isSearchActive: Boolean,
@@ -212,33 +248,53 @@ fun SearchUi(
     onSearchActiveChange: (Boolean) -> Unit,
     onSearchTextChange: (String) -> Unit,
     onPlaceSelected: (PlaceAPIResult) -> Unit,
-    onRecenterClick: () -> Unit
+    onRecenterClick: () -> Unit,
+    weather: WeatherResponse? // ←追加
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
     ) {
-        AnimatedVisibility(
+
+        /*
+         *  天気カード ＋ 現在地 FAB を横並びで表示（検索していない時だけ）
+         **/
+        AnimatedVisibility(                               // ★★ 変更点① ★★
             visible = !isSearchActive,
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.fillMaxWidth()            // Row 全体を横幅いっぱいに
         ) {
-            FloatingActionButton(
-                onClick = onRecenterClick,
-                modifier = Modifier.padding(bottom = 8.dp, end = 16.dp),
-                containerColor = Color.White
+            Row(                                          // ★★ 変更点② ★★
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Filled.MyLocation, contentDescription = "Recenter")
+
+                /*――― 左側：天気カード ―――*/
+                weather?.let {
+                    WeatherInfoCard(weather = it)
+                }
+
+                /*――― 右側：現在地（GPS）FAB ―――*/
+                FloatingActionButton(
+                    onClick = onRecenterClick,
+                    containerColor = Color.White
+                ) {
+                    Icon(Icons.Filled.MyLocation, contentDescription = "Recenter")
+                }
             }
         }
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            val columnModifier = if (isSearchActive) {
+            val columnModifier = if (isSearchActive)
                 Modifier.height(LocalConfiguration.current.screenHeightDp.dp * 0.7f)
-            } else {
+            else
                 Modifier.padding(vertical = 12.dp)
             }
             Column(
@@ -330,6 +386,57 @@ fun SearchUi(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+
+/* =====================================================
+   天気表示カード
+   ===================================================== */
+@Composable
+fun WeatherInfoCard(
+    weather: WeatherResponse,
+    modifier: Modifier = Modifier
+) {
+    // 天気アイコンのURLを作成
+    val iconUrl = "https://openweathermap.org/img/wn/${weather.weather.first().icon}@2x.png"
+
+    // カードの外枠を定義
+    Card(
+        modifier = modifier, // 外部から modifier 指定可能
+        shape = RoundedCornerShape(16.dp), // 角丸の指定
+        colors = CardDefaults.cardColors(containerColor = Color.White), // カード背景色指定
+        elevation = CardDefaults.cardElevation(4.dp) // 影の高さ指定
+    ) {
+        // 横並びのレイアウト
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), // 内側の余白指定
+            verticalAlignment = Alignment.CenterVertically // 垂直中央揃え
+        ) {
+            // 天気アイコン画像
+            Icon(
+                painter = rememberAsyncImagePainter(iconUrl), // URLから画像取得
+                contentDescription = weather.weather.first().description, // アクセシビリティ対応
+                tint = Color.Unspecified, // 元画像の色を利用
+                modifier = Modifier.size(36.dp) // アイコンサイズ指定
+            )
+            Spacer(Modifier.width(8.dp)) // アイコンとテキストの間にスペース追加
+            // 温度・都市名の表示
+            Column {
+                // 気温表示（太字）
+                Text(
+                    text = "${weather.main.temp.toInt()}°C",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                // 都市名の表示（グレー、やや小さめの文字）
+                Text(
+                    text = weather.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
             }
         }
     }
