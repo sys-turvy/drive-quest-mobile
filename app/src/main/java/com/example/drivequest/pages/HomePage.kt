@@ -3,19 +3,15 @@ package com.example.drivequest.pages
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -23,6 +19,7 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,15 +28,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
 import com.example.drivequest.BuildConfig
 import com.example.drivequest.data.remote.api.weather.WeatherManager
 import com.example.drivequest.data.remote.api.weather.WeatherResponse
@@ -48,8 +47,10 @@ import com.example.drivequest.pages.Components.ArrivalCard
 import com.example.drivequest.pages.Components.GuidanceCard
 import com.example.drivequest.pages.Components.Loading
 import com.example.drivequest.pages.Components.AchievementsCard
+import com.example.drivequest.pages.Components.SpeedCard
 import com.example.drivequest.pages.Components.WeatherInfoCard
 import com.example.drivequest.view_model.UiState
+import com.example.drivequest.view_model.SpeedViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.navigation.NavigationApi
 import com.google.android.libraries.navigation.NavigationView
@@ -57,12 +58,12 @@ import com.google.android.libraries.navigation.Navigator
 import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import com.example.drivequest.view_model.HomeViewModel
 
 @SuppressLint("MissingPermission")
 @Composable
 fun HomePage(
-    homeViewModel: HomeViewModel = viewModel(),
+    homeViewModel: com.example.drivequest.view_model.HomeViewModel = viewModel(),
+    speedViewModel: SpeedViewModel = viewModel()
 ) {
     val uiState             by homeViewModel.uiState.collectAsState()
     val guidanceInfo        by homeViewModel.guidanceInfo.collectAsState()
@@ -86,6 +87,17 @@ fun HomePage(
     val weather by weatherManager.weather.collectAsState()
     DisposableEffect(weatherManager) { onDispose { weatherManager.stop() } }
     /*  */
+
+    // 速度監視
+    val speed by speedViewModel.speed.observeAsState(0f)
+    // ガイダンス中のみ位置情報取得ON/OFF
+    LaunchedEffect(uiState) {
+        if (uiState == UiState.GUIDING) {
+            speedViewModel.startLocationUpdates(context)
+        } else {
+            speedViewModel.stopLocationUpdates()
+        }
+    }
 
     DisposableEffect(Unit) {
         val listener = object : NavigationApi.NavigatorListener {
@@ -112,7 +124,7 @@ fun HomePage(
             .collect { query -> homeViewModel.onSearchQueryChanged(query) }
     }
 
-        /*********** ナビエンジン準備チェック ***********/
+    /*********** ナビエンジン準備チェック ***********/
     Box(modifier = Modifier.fillMaxSize()) {
         if (!isNavigatorReady) {
             Loading()
@@ -153,6 +165,18 @@ fun HomePage(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Bottom
                     ) {
+                        // 速度カードを天気カードRowの少し上・左寄せに表示
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            SpeedCard(
+                                speed = speed,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
                             modifier = Modifier
@@ -165,7 +189,7 @@ fun HomePage(
                             weather?.let {
                                 WeatherInfoCard(
                                     weather = it,
-                                    modifier = Modifier // 必要ならサイズ・装飾を追加
+                                    modifier = Modifier
                                 )
                             }
                             // 右側：現在地（GPS）ボタン
@@ -262,13 +286,9 @@ fun SearchUi(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-                /*――― 左側：天気カード ―――*/
                 weather?.let {
                     WeatherInfoCard(weather = it)
                 }
-
-                /*――― 右側：現在地（GPS）FAB ―――*/
                 FloatingActionButton(
                     onClick = onRecenterClick,
                     containerColor = Color.White
@@ -359,13 +379,18 @@ fun SearchUi(
                     exit = shrinkVertically(shrinkTowards = Alignment.Bottom)
                 ) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxWidth().height(300.dp).padding(top = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .padding(top = 8.dp)
+                            .background(Color.White)
                     ) {
                         items(autocompleteResults) { result ->
                             Column(
-                                modifier = Modifier.fillMaxWidth().clickable {
-                                    onPlaceSelected(result)
-                                }.padding(horizontal = 16.dp, vertical = 12.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onPlaceSelected(result) }
+                                    .padding(horizontal = 16.dp, vertical = 12.dp)
                             ) {
                                 Text(result.primaryText, fontWeight = FontWeight.Bold)
                                 Text(
