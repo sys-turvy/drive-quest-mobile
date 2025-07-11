@@ -47,6 +47,7 @@ import com.example.drivequest.domain.model.PlaceAPIResult
 import com.example.drivequest.pages.Components.ArrivalCard
 import com.example.drivequest.pages.Components.GuidanceCard
 import com.example.drivequest.pages.Components.Loading
+import com.example.drivequest.pages.Components.AchievementsCard
 import com.example.drivequest.view_model.UiState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.navigation.NavigationApi
@@ -56,10 +57,6 @@ import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import com.example.drivequest.view_model.HomeViewModel
-import androidx.compose.foundation.layout.navigationBarsPadding   // 追加済み
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -113,9 +110,9 @@ fun HomePage(
             .distinctUntilChanged()
             .collect { query -> homeViewModel.onSearchQueryChanged(query) }
     }
-    Box(Modifier.fillMaxSize()) {
         /*********** ナビエンジン準備チェック ***********/
 
+    Box(modifier = Modifier.fillMaxSize()) {
         if (!isNavigatorReady) {
             Loading()
         } else {
@@ -127,6 +124,7 @@ fun HomePage(
 
             /*********** UI 切り替え ***********/
             when (uiState) {
+                //検索時
                 UiState.SEARCHING -> {
                     SearchUi(
                         isSearchActive = isSearchActive,
@@ -216,7 +214,7 @@ fun HomePage(
             }
         }
     }
-    
+
     // NavigationViewのライフサイクル管理
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -389,7 +387,7 @@ fun SearchUi(
             }
         }
     }
-}
+
 
 
 /* =====================================================

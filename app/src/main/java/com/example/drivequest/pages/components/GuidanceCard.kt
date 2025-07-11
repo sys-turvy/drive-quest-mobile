@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.components
+package com.example.drivequest.pages.Components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
