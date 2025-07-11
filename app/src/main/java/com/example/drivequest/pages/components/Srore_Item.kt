@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.Components
+package com.example.drivequest.pages.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

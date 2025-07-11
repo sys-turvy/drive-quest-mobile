@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.Components
+package com.example.drivequest.pages.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

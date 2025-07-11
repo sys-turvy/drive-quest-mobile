@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.Components
+package com.example.drivequest.pages.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement

@@ -39,11 +39,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.drivequest.pages.Components.ArrivalCard
+import com.example.drivequest.pages.components.ArrivalCard
 import com.example.drivequest.domain.model.PlaceAPIResult
-import com.example.drivequest.pages.Components.AchievementsCard
-import com.example.drivequest.pages.Components.GuidanceCard
-import com.example.drivequest.pages.Components.Loading
+import com.example.drivequest.pages.components.AchievementsCard
+import com.example.drivequest.pages.components.GuidanceCard
+import com.example.drivequest.pages.components.Loading
 import com.example.drivequest.view_model.UiState
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.navigation.NavigationApi

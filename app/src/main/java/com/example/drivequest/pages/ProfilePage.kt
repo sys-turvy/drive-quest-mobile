@@ -39,8 +39,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import coil.compose.AsyncImage
-import com.example.drivequest.pages.Components.BottomBannerAdWithDummy
-import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.components.BottomBannerAdWithDummy
+import com.example.drivequest.pages.components.GradientBackground
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import kotlin.math.roundToInt
 

@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -49,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.drivequest.R
 import coil.compose.AsyncImage
-import com.example.drivequest.pages.Components.GradientBackground
+import com.example.drivequest.pages.components.GradientBackground
 import com.example.drivequest.ui.theme.DriveQuestTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

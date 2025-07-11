@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.pages.Components.BottomBannerAdWithDummy // ★ここを追加！
+import com.example.drivequest.pages.components.GradientBackground
+import com.example.drivequest.pages.components.BottomBannerAdWithDummy // ★ここを追加！
 import com.example.drivequest.presentation.drivehistory.model.DriveHistoryUiState
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.google.android.gms.ads.AdSize

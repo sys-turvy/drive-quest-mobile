@@ -1,4 +1,4 @@
-package com.example.drivequest.pages.Components
+package com.example.drivequest.pages.components
 
 import android.net.Uri
 import androidx.compose.foundation.Image

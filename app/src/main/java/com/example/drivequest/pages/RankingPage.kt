@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.pages.Components.BottomBannerAdWithDummy
+import com.example.drivequest.pages.components.GradientBackground
+import com.example.drivequest.pages.components.BottomBannerAdWithDummy
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import androidx.compose.material.icons.filled.Share
 import android.content.Intent

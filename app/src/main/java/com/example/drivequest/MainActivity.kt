@@ -12,8 +12,7 @@ import androidx.core.content.ContextCompat
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.google.android.libraries.places.api.Places
 import androidx.activity.enableEdgeToEdge
-import com.example.drivequest.pages.Components.GradientBackground
-import com.example.drivequest.ui.theme.DriveQuestTheme
+import com.example.drivequest.pages.components.GradientBackground
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 
