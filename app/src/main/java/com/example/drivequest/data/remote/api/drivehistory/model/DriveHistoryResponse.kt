@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 data class DriveHistoryResponse (
     val drivingHistoryId: String,
     val userId: String,
-    val drivingMileage: Int,
+    val drivingMileage: Double,
     val durationTime: Int,
     val routeData: String?,
     val createdAt: String,

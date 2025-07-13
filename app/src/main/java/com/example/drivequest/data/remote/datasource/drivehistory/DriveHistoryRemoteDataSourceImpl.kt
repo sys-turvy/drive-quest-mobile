@@ -1,6 +1,5 @@
 package com.example.drivequest.data.remote.datasource.drivehistory
 
-import com.example.drivequest.data.remote.api.auth.AuthApiService
 import com.example.drivequest.data.remote.api.drivehistory.DriveHistoryApiService
 import com.example.drivequest.data.remote.api.drivehistory.model.DriveHistoryResponse
 import retrofit2.HttpException
