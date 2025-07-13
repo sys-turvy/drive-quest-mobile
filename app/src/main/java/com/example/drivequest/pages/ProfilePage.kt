@@ -44,6 +44,7 @@ import com.example.drivequest.pages.components.GradientBackground
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController) {
     var activeDialog by remember { mutableStateOf<DialogType?>(null) }
@@ -51,196 +52,242 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavHostController)
     var currentVoice by remember { mutableStateOf<Product?>(null) }
     var currentAchievement by remember { mutableStateOf<Achievement?>(null) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                title = {
+                    Text(
+                        text = "プロフィール",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            )
+        },
+        bottomBar = {
+            BottomBannerAdWithDummy(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .zIndex(3f)
+            )
+        }
+    ) { innerPadding ->
+
+        Box(
             modifier = modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(Color(0xFF4A90E2), Color(0xFF87CEEB))
                     )
                 )
-                .padding(bottom = 75.dp), // ← バナー高さ分の下余白を追加！
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = "プロフィール",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(16.dp),
-                color = Color.White
-            )
-
-            // プロフィール
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(280.dp)
-                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Row {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            modifier = Modifier.size(60.dp)
-                        )
-                        Column {
-                            Text("名前", fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                            Text("称号", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    }
+                // プロフィール
+                ProfileCard()
 
-                    Row(modifier = Modifier.padding(top = 10.dp)) {
-                        Column(modifier = Modifier.padding(end = 60.dp)) {
-                            Text("今日の走行距離", fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(bottom = 10.dp))
-                            Text("12.0km", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        }
-                        Column {
-                            Text("今日の走行時間", fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(bottom = 10.dp))
-                            Text("30分", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        }
-                    }
-
-                    Column(modifier = Modifier.padding(top = 20.dp)) {
-                        Text("今日の目標走行距離", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        Text("20km", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(vertical = 10.dp))
-                    }
-
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        GoalProgressBar(12, 20)
-                    }
-                }
-            }
-
-            // 友達リストへ遷移
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .padding(20.dp)
-                    .clickable {
-                        navController.navigate("friend")
-                    }
-            ) {
-                Row(
+                // 友達リストへ遷移
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .height(100.dp)
+                        .padding(20.dp)
+                        .clickable {
+                            navController.navigate("friend")
+                        }
                 ) {
-                    Icon(Icons.Default.PeopleOutline, contentDescription = null, modifier = Modifier.size(40.dp))
-                    Text("友達リスト", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(horizontal = 10.dp))
-                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, modifier = Modifier.size(40.dp))
-                }
-            }
-
-            // 設定
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(720.dp)
-                    .padding(start = 20.dp, end = 20.dp, bottom = 15.dp)
-            ) {
-                Column {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text("- 設定 -", fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(top = 8.dp))
-                    }
-
-                    ProfileSection("ニックネーム", content = {
-                        Text("名前", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    }) {
-                        activeDialog = DialogType.Nickname
-                    }
-
-                    ProfileSection("アイコン", content = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(15.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.Person,
+                            Icons.Default.PeopleOutline,
                             contentDescription = null,
-                            modifier = Modifier.size(48.dp)
+                            modifier = Modifier.size(40.dp)
                         )
-                    }) {
-                        activeDialog = DialogType.Icon
-                    }
-
-                    ProfileSection("目標走行距離/月", content = {
-                        Text("20km", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    }) {
-                        activeDialog = DialogType.Distance
-                    }
-
-                    ProfileSection("アイコンフレーム", content = {
-                        Text("画像", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    }) {
-                        activeDialog = DialogType.Frame
-                    }
-
-                    ProfileSection("ナビ音声", content = {
-                        Text("ずんだもん", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    }) {
-                        activeDialog = DialogType.Voice
-                    }
-
-                    ProfileSection("称号", content = {
-                        Text("画像", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    }) {
-                        activeDialog = DialogType.Achievement
+                        Text(
+                            "友達リスト",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            modifier = Modifier.padding(horizontal = 10.dp)
+                        )
+                        Icon(
+                            Icons.Default.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
                     }
                 }
+
+                // 設定
+                SettingsSection(
+                    onNicknameClick = { activeDialog = DialogType.Nickname },
+                    onIconClick = { activeDialog = DialogType.Icon },
+                    onDistanceClick = { activeDialog = DialogType.Distance },
+                    onFrameClick = { activeDialog = DialogType.Frame },
+                    onVoiceClick = { activeDialog = DialogType.Voice },
+                    onAchievementClick = { activeDialog = DialogType.Achievement }
+                )
+
+                Button(
+                    onClick = {
+                        navController.navigate("login")
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF1616),
+                        contentColor = Color.White,
+                    ),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text("ログアウト", fontWeight = FontWeight.Bold)
+                }
             }
-            Button(
-                onClick = {
-                    navController.navigate("login")
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF1616),
-                    contentColor = Color.White,
-                ),
-                shape = RoundedCornerShape(4.dp)
-            ) {
-                Text("ログアウト", fontWeight = FontWeight.Bold)
+
+            // ダイアログ処理はここで
+            when (activeDialog) {
+                is DialogType.Nickname -> NicknameDialog { activeDialog = null }
+                is DialogType.Icon -> IconDialog { activeDialog = null }
+                is DialogType.Distance -> DistanceDialog { activeDialog = null }
+                is DialogType.Frame -> ListDialog(
+                    title = "アイコンフレーム",
+                    frames = sampleFrames,
+                    selected = currentFrame,
+                    onClose = { activeDialog = null },
+                    onSave = { currentFrame = it }
+                )
+
+                DialogType.Voice -> ListDialog(
+                    title = "ナビボイス",
+                    frames = sampleFrames,
+                    selected = currentVoice,
+                    onClose = { activeDialog = null },
+                    onSave = { currentVoice = it }
+                )
+
+                is DialogType.Achievement -> AchievementDialog(
+                    title = "称号",
+                    achievement = sampleAchievement,
+                    selected = currentAchievement,
+                    onClose = { activeDialog = null },
+                    onSave = { currentAchievement = it }
+                )
+
+                null -> {}
             }
         }
+    }
+}
 
-        // ダイアログ処理はここで
-        when (activeDialog) {
-            is DialogType.Nickname -> NicknameDialog { activeDialog = null }
-            is DialogType.Icon -> IconDialog { activeDialog = null }
-            is DialogType.Distance -> DistanceDialog { activeDialog = null }
-            is DialogType.Frame -> ListDialog(
-                title = "アイコンフレーム",
-                frames = sampleFrames,
-                selected = currentFrame,
-                onClose = { activeDialog = null },
-                onSave = { currentFrame = it }
-            )
-            DialogType.Voice -> ListDialog(
-                title = "ナビボイス",
-                frames = sampleFrames,
-                selected = currentVoice,
-                onClose = { activeDialog = null },
-                onSave = { currentVoice = it }
-            )
-            is DialogType.Achievement -> AchievementDialog(
-                title = "称号",
-                achievement = sampleAchievement,
-                selected = currentAchievement,
-                onClose = { activeDialog = null },
-                onSave = { currentAchievement = it }
-            )
-            null -> {}
+@Composable
+fun ProfileCard(){
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(280.dp)
+            .padding(horizontal = 20.dp)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    modifier = Modifier.size(60.dp)
+                )
+                Column {
+                    Text("名前", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                    Text("称号", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Row(modifier = Modifier.padding(top = 10.dp)) {
+                Column(modifier = Modifier.padding(end = 60.dp)) {
+                    Text("今日の走行距離", fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(bottom = 10.dp))
+                    Text("12.0km", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+                Column {
+                    Text("今日の走行時間", fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(bottom = 10.dp))
+                    Text("30分", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+            }
+
+            Column(modifier = Modifier.padding(top = 20.dp)) {
+                Text("今日の目標走行距離", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("20km", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(vertical = 10.dp))
+            }
+
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                GoalProgressBar(12, 20)
+            }
         }
+    }
+}
 
-        // 画面下部にバナーを重ねて固定表示
-        BottomBannerAdWithDummy(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .zIndex(3f)
-        )
+@Composable
+fun SettingsSection(
+    onNicknameClick: () -> Unit,
+    onIconClick: () -> Unit,
+    onDistanceClick: () -> Unit,
+    onFrameClick: () -> Unit,
+    onVoiceClick: () -> Unit,
+    onAchievementClick: () -> Unit,
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 15.dp)
+        ) {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text("- 設定 -", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            }
+
+            ProfileSection("ニックネーム", content = {
+                Text("名前", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }, onClick = onNicknameClick)
+
+            ProfileSection("アイコン", content = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp)
+                )
+            }, onClick = onIconClick)
+
+            ProfileSection("目標走行距離/月", content = {
+                Text("20km", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }, onClick = onDistanceClick)
+
+            ProfileSection("アイコンフレーム", content = {
+                Text("画像", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }, onClick = onFrameClick)
+
+            ProfileSection("ナビ音声", content = {
+                Text("ずんだもん", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }, onClick = onVoiceClick)
+
+            ProfileSection("称号", content = {
+                Text("画像", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }, onClick = onAchievementClick)
+        }
     }
 }
 
@@ -374,8 +421,6 @@ fun NicknameDialog(onClose: () -> Unit) {
         modifier = Modifier.width(300.dp)
     )
 }
-
-
 
 // アイコンのダイアログ
 @Composable

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.drivequest.pages.components.GradientBackground
 import com.example.drivequest.pages.components.BottomBannerAdWithDummy // ★ここを追加！
@@ -27,6 +28,7 @@ import com.example.drivequest.presentation.drivehistory.model.DriveHistoryUiStat
 import com.example.drivequest.ui.theme.DriveQuestTheme
 import com.google.android.gms.ads.AdSize
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriveHistoryScreen(
     modifier: Modifier = Modifier,
@@ -35,46 +37,57 @@ fun DriveHistoryScreen(
     val driveHistories by driveHistoryViewModel.driveHistories.collectAsState()
     val errorMessage by driveHistoryViewModel.error.collectAsState()
 
-    // バナーの高さ取得部分はそのままでも可
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    val displayMetrics = context.resources.displayMetrics
-    val adWidthPixels = displayMetrics.widthPixels
-    val adWidthDp = (adWidthPixels / displayMetrics.density).toInt()
-    val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidthDp)
-    val bannerDpHeight = with(density) { adSize.getHeightInPixels(context).toDp() }
-
     LaunchedEffect(Unit) {
         driveHistoryViewModel.loadHistories()
     }
 
     // ここからBoxでラップ
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = bannerDpHeight), // バナーの高さ分だけ下にパディング
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "運転履歴",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(16.dp),
-                color = Color.White
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                title = {
+                    Text(
+                        text = "運転履歴",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             )
-            if (errorMessage != null) {
-                Text("エラー: $errorMessage", color = Color.Red)
-            } else {
-                DriveLogList(driveHistories)
+        },
+        bottomBar = {
+            BottomBannerAdWithDummy(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .zIndex(3f)
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (errorMessage != null) {
+                    Text(
+                        text = "エラー: $errorMessage",
+                        color = Color.Red,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                } else {
+                    DriveLogList(driveHistories)
+                }
             }
         }
-        BottomBannerAdWithDummy(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        )
     }
 }
 
