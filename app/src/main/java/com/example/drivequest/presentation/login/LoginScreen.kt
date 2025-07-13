@@ -116,9 +116,10 @@ fun LoginForm(
                 labelText = "パスワード",
                 errorMessage = passwordInputState.validationError,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
-                )
+                ),
+                isPassword = true
             )
         },
         button = {
