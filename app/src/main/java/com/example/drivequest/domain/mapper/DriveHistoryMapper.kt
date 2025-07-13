@@ -6,7 +6,7 @@ import com.example.drivequest.domain.model.DriveHistory
 fun DriveHistoryResponse.toDomain(): DriveHistory {
     return DriveHistory(
         id = drivingHistoryId,
-        distanceKm = drivingMileage.toDouble(),
+        distanceKm = drivingMileage,
         durationMinutes = durationTime,
         timestamp = createdAt
     )

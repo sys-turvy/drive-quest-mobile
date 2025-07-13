@@ -7,9 +7,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.drivequest.pages.HomePage
 import com.example.drivequest.pages.ProfilePage
-import com.example.drivequest.pages.RankingPage
 import com.example.drivequest.presentation.store.StoreScreen
 import com.example.drivequest.presentation.drivehistory.DriveHistoryScreen
+import com.example.drivequest.presentation.ranking.RankingScreen
 
 @Composable
 fun MainPage() {
@@ -20,7 +20,7 @@ fun MainPage() {
         NavHost(navController = childNavController, startDestination = "home") {
             composable("home") { HomePage() }
             composable("profile") { ProfilePage(navController = childNavController) }
-            composable("ranking") { RankingPage() }
+            composable("ranking") { RankingScreen() }
             composable("store") { StoreScreen() }
             composable("history") { DriveHistoryScreen() }
         }

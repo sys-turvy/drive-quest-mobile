@@ -225,7 +225,7 @@ fun ProductDetailDialog(
                 ) {
                     AsyncImage(
                         model = product.imgUrl.ifBlank {
-                            "https://play-lh.googleusercontent.com/2HAZLGMx7WmmnCT5b7CAKazuEhHtTfnnCPDrAI9FY3gYsGXfvpxby0j0qj3PSixc4w"
+                            "https://drive-quest-s3.s3.ap-northeast-1.amazonaws.com/voice_icon/voice_zundamon.png"
                         },
                         contentDescription = product.name,
                         modifier = Modifier
