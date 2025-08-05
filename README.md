@@ -7,9 +7,6 @@
   
 ・https://openweathermap.org/にアクセスし、APIキーを作成 (OpenWeatherMap)
 
-##広告用IDの作成
-
-
 
 ## 環境変数の設定
 ・secrets.propertiesをprojectレベルのappと同じ階層に作成し、以下を設定する  
@@ -20,6 +17,7 @@ GOOGLE_MAPS_API_KEY= "YOUR API KEY"
 
 ・local.propertiesに、以下を設定する  
 ```
-ADMOB_BANNER_ID= "YOUR ADMOB BANNER ID"
+ADMOB_BANNER_ID= "ca-app-pub-3940256099942544/6300978111"
 OPENWEATHER_API_KEY= "YOUR API KEY"
+
 ```
